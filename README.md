@@ -5,7 +5,7 @@
 </p> -->
 
 <p align="center">
-Compose latest android library dependency
+Compose latest android library dependencies
 </p>
 
 ## Preview
@@ -13,3 +13,10 @@ Compose latest android library dependency
 <p align="center">
     <img src="images/preview.png" width="70%"/>
 </p>
+
+## Getting Started
+
+```bash
+pip install -r requirements.txt
+python main.py
+```
