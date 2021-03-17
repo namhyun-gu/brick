@@ -1,0 +1,5 @@
+{
+    "mavenCentral": "https://repo1.maven.org/maven2",
+    "mavenApache": "https://repo.maven.apache.org/maven2/",
+    "google": "https://dl.google.com/dl/android/maven2"
+}
