@@ -1,0 +1,13 @@
+name: Jetpack
+source: google
+content:
+  - name: Activity
+    document: https://developer.android.com/jetpack/androidx/releases/activity
+    java:
+      - androidx.activity:activity
+    kotlin:
+      - androidx.activity:activity-ktx
+  - name: Appcompat
+    document: https://developer.android.com/jetpack/androidx/releases/appcompat
+    java:
+      - androidx.appcompat:appcompat

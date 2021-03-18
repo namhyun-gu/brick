@@ -4,6 +4,11 @@ import requests
 import dataclasses
 import inquirer
 import clipboard
+import os
+import yaml
+import click
+import sys
+
 
 @dataclasses.dataclass
 class MetadataVersions:
@@ -18,6 +23,21 @@ class Metadata:
     group_id: str
     artifact_id: str
     versioning: MetadataVersions
+
+
+@dataclasses.dataclass
+class Content:
+    name: str
+    document: str
+    java: list[str]
+    kotlin: list[str]
+
+
+@dataclasses.dataclass
+class Section:
+    name: str
+    source: str
+    contents: dict[str, Content]
 
 
 def parse_metadata(metadata: str) -> Metadata:
@@ -40,17 +60,15 @@ def parse_metadata(metadata: str) -> Metadata:
         group_id=group_id,
         artifact_id=artifact_id,
         versioning=MetadataVersions(
-            latest=latest,
-            release=release,
-            version=versions,
-            last_updated=last_updated
-        )
+            latest=latest, release=release, version=versions, last_updated=last_updated
+        ),
     )
 
 
 def fetch_metadata(group_id: str, artifact_id: str, source: str):
     sources = load_sources()
-    url = build_metadata_url(sources[source], group_id, artifact_id)
+    source_url = sources[source] if source in sources else source
+    url = build_metadata_url(source_url, group_id, artifact_id)
     response = requests.get(url)
 
     if response.status_code == 200:
@@ -70,32 +88,88 @@ def load_sources():
     with open("./sources.json") as file:
         return json.load(file)
 
-def load_contents():
-    with open("./contents.json") as file:
-        return json.load(file)
+
+def load_sections() -> dict[str, Section]:
+    contents = read_sections()
+    return parse_sections(contents)
+
+
+def read_sections():
+    contents = {}
+    for content in os.listdir("./contents"):
+        content_path = os.path.join("./contents", content)
+        content_name, _ = os.path.splitext(os.path.basename(content))
+
+        with open(content_path) as content_file:
+            content_yaml = yaml.load(content_file, Loader=yaml.BaseLoader)
+            contents[content_name] = content_yaml
+
+    return contents
+
+
+def parse_sections(contents: dict) -> dict[str, Section]:
+    sections = {}
+    for content in contents:
+        section = contents[content]
+        section_name = section["name"]
+        section_source = section["source"]
+        section_contents = {}
+
+        for item in section["content"]:
+            name = item["name"]
+            document = item["document"]
+            java = item["java"]
+            kotlin = []
+
+            if "kotlin" in item:
+                kotlin = item["kotlin"]
+
+            section_contents[name] = Content(
+                name=name, document=document, java=java, kotlin=kotlin
+            )
+
+        sections[content] = Section(
+            name=section_name, source=section_source, contents=section_contents
+        )
+
+    return sections
+
 
 def dependency_notation(group_id: str, artifact_id: str, version: str) -> str:
     return f"{group_id}:{artifact_id}:{version}"
 
+
 def dependency_noun(language: str, dependency_notation) -> str:
     if language == "kotlin":
-        return f"implementation(\"{dependency_notation}\")"
+        return f'implementation("{dependency_notation}")'
     elif language == "groovy":
-        return f"implementation \"{dependency_notation}\""
+        return f'implementation "{dependency_notation}"'
 
-if __name__ == "__main__":
+
+def copy_clipboard(content: str):
+    clipboard.copy(content)
+
+
+@click.group()
+def cli():
+    pass
+
+
+def interactive():
+    sections = load_sections()
+
     questions = [
         inquirer.List(
-            'project_language',
+            "project_language",
             message="Language",
             choices=["Kotlin", "Java"],
-            default="Kotlin"
+            default="Kotlin",
         ),
         inquirer.List(
-            'gradle_language',
+            "gradle_language",
             message="Gradle Language",
             choices=["Groovy", "Kotlin"],
-            default="Groovy"
+            default="Groovy",
         ),
     ]
 
@@ -105,43 +179,51 @@ if __name__ == "__main__":
     gradle_language = answers["gradle_language"].lower()
 
     questions = []
-    contents = load_contents()
 
-    for content in contents:
-        choices = contents[content]
-
+    for key, section in sections.items():
         question = inquirer.Checkbox(
-            name=content,
-            message=f"{content} (Press spacebar to select)",
-            choices=choices
+            name=key,
+            message=f"{section.name} (Press spacebar to select)",
+            choices=list(map(lambda content: content.name, section.contents.values())),
         )
+
         questions.append(question)
-    
+
     answers = inquirer.prompt(questions)
 
     output = []
-    for content in contents:
-        for item in answers[content]:
-            source = contents[content][item]["source"]
-            for dependency in contents[content][item][project_language]:
-                group_id = dependency["groupId"]
-                artifact_id = dependency["artifactId"]
+    for key, section in sections.items():
+        for selected in answers[key]:
+            content = section.contents[selected]
 
-                metadata = None
-                if "source" in dependency:
-                    metadata = fetch_metadata(group_id, artifact_id, dependency["source"])
-                else:
-                    metadata = fetch_metadata(group_id, artifact_id, source)
+            dependencies = []
+            if project_language == "kotlin":
+                dependencies = content.kotlin if content.kotlin else content.java
+            else:
+                dependencies = content.java
 
+            for dependency in dependencies:
+                group_id, artifact_id = dependency.split(":")
+
+                metadata = fetch_metadata(group_id, artifact_id, section.source)
                 if metadata:
                     dependency_str = dependency_noun(
                         gradle_language,
-                        dependency_notation(group_id, artifact_id, metadata.versioning.latest)
+                        dependency_notation(
+                            group_id, artifact_id, metadata.versioning.latest
+                        ),
                     )
 
                     output.append(dependency_str)
 
+    output = "\n".join(output)
+    print(output)
+    copy_clipboard(output)
+    print("\nCopied to clipboard!")
 
-    clipboard.copy("\n".join(output))
-    print("\n".join(output))
-    print("\nCopied to clipboard")
+
+if __name__ == "__main__":
+    if len(sys.argv) >= 2:
+        cli()
+    else:
+        interactive()
