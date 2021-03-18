@@ -26,11 +26,17 @@ class Metadata:
 
 
 @dataclasses.dataclass
+class Dependency:
+    content: str
+    type: str = "implementation"
+
+
+@dataclasses.dataclass
 class Content:
     name: str
     document: str
-    java: list[str]
-    kotlin: list[str]
+    java: list[Dependency]
+    kotlin: list[Dependency]
 
 
 @dataclasses.dataclass
@@ -118,11 +124,8 @@ def parse_sections(contents: dict) -> dict[str, Section]:
         for item in section["content"]:
             name = item["name"]
             document = item["document"]
-            java = item["java"]
-            kotlin = []
-
-            if "kotlin" in item:
-                kotlin = item["kotlin"]
+            java = parse_dependencies(item["java"])
+            kotlin = parse_dependencies(item["kotlin"]) if "kotlin" in item else []
 
             section_contents[name] = Content(
                 name=name, document=document, java=java, kotlin=kotlin
@@ -135,15 +138,32 @@ def parse_sections(contents: dict) -> dict[str, Section]:
     return sections
 
 
+def parse_dependencies(items: list) -> list[Dependency]:
+    dependencies = []
+    for dep in items:
+        dependency_object = None
+        if isinstance(dep, dict):
+            content = dep["content"]
+            if "type" in dep:
+                type = dep["type"]
+                dependency_object = Dependency(content, type)
+            else:
+                dependency_object = Dependency(content)
+        else:
+            dependency_object = Dependency(dep)
+        dependencies.append(dependency_object)
+    return dependencies
+
+
 def dependency_notation(group_id: str, artifact_id: str, version: str) -> str:
     return f"{group_id}:{artifact_id}:{version}"
 
 
-def dependency_noun(language: str, dependency_notation) -> str:
+def dependency_noun(language: str, prefix: str, dependency_notation: str) -> str:
     if language == "kotlin":
-        return f'implementation("{dependency_notation}")'
+        return f'{prefix}("{dependency_notation}")'
     elif language == "groovy":
-        return f'implementation "{dependency_notation}"'
+        return f'{prefix} "{dependency_notation}"'
 
 
 def copy_clipboard(content: str):
@@ -203,12 +223,13 @@ def interactive():
                 dependencies = content.java
 
             for dependency in dependencies:
-                group_id, artifact_id = dependency.split(":")
+                group_id, artifact_id = dependency.content.split(":")
 
                 metadata = fetch_metadata(group_id, artifact_id, section.source)
                 if metadata:
                     dependency_str = dependency_noun(
                         gradle_language,
+                        dependency.type,
                         dependency_notation(
                             group_id, artifact_id, metadata.versioning.latest
                         ),
