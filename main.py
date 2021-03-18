@@ -155,6 +155,47 @@ def parse_dependencies(items: list) -> list[Dependency]:
     return dependencies
 
 
+def generate_dependencies(
+    sections: dict[str, Section],
+    project_language: str,
+    gradle_language: str,
+    select_items: list[tuple[str, str]],
+) -> list[str]:
+    output = []
+
+    for select_item in select_items:
+        section_key, group = select_item
+
+        if section_key not in sections or group not in sections[section_key].contents:
+            continue
+
+        section = sections[section_key]
+        group_content = sections[section_key].contents[group]
+
+        if project_language == "kotlin":
+            dependencies = (
+                group_content.kotlin if group_content.kotlin else group_content.java
+            )
+        else:
+            dependencies = group_content.java
+
+        for dependency in dependencies:
+            group_id, artifact_id = dependency.content.split(":")
+
+            metadata = fetch_metadata(group_id, artifact_id, section.source)
+            if metadata:
+                dependency_str = dependency_noun(
+                    gradle_language,
+                    dependency.type,
+                    dependency_notation(
+                        group_id, artifact_id, metadata.versioning.latest
+                    ),
+                )
+                output.append(dependency_str)
+
+    return output
+
+
 def dependency_notation(group_id: str, artifact_id: str, version: str) -> str:
     return f"{group_id}:{artifact_id}:{version}"
 
@@ -173,6 +214,28 @@ def copy_clipboard(content: str):
 @click.group()
 def cli():
     pass
+
+
+@click.command()
+@click.argument("dependencies", nargs=-1)
+@click.option("-l", "--lang", "lang", default="kotlin", type=str)
+@click.option("-g", "--gradle", "gradle", default="groovy", type=str)
+def get(dependencies: list[str], lang, gradle):
+    sections = load_sections()
+
+    select_items = []
+    for dependency in dependencies:
+        section, group = dependency.split(":")
+        select_items.append((section, group))
+
+    output = generate_dependencies(sections, lang.lower(), gradle.lower(), select_items)
+
+    print("\n".join(output))
+
+
+@click.command("ui")
+def open_ui():
+    click.echo("Unsupported operation")
 
 
 def interactive():
@@ -211,32 +274,14 @@ def interactive():
 
     answers = inquirer.prompt(questions)
 
-    output = []
-    for key, section in sections.items():
-        for selected in answers[key]:
-            content = section.contents[selected]
+    select_items = []
+    for section, items in answers.items():
+        for item in items:
+            select_items.append((section, item))
 
-            dependencies = []
-            if project_language == "kotlin":
-                dependencies = content.kotlin if content.kotlin else content.java
-            else:
-                dependencies = content.java
-
-            for dependency in dependencies:
-                group_id, artifact_id = dependency.content.split(":")
-
-                metadata = fetch_metadata(group_id, artifact_id, section.source)
-                if metadata:
-                    dependency_str = dependency_noun(
-                        gradle_language,
-                        dependency.type,
-                        dependency_notation(
-                            group_id, artifact_id, metadata.versioning.latest
-                        ),
-                    )
-
-                    output.append(dependency_str)
-
+    output = generate_dependencies(
+        sections, project_language, gradle_language, select_items
+    )
     output = "\n".join(output)
     print(output)
     copy_clipboard(output)
@@ -245,6 +290,8 @@ def interactive():
 
 if __name__ == "__main__":
     if len(sys.argv) >= 2:
+        cli.add_command(get)
+        cli.add_command(open_ui)
         cli()
     else:
         interactive()
