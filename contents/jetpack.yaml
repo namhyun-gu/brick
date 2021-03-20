@@ -1,13 +1,203 @@
 name: Jetpack
 source: google
 content:
-  - name: Activity
+  - name: activity
     document: https://developer.android.com/jetpack/androidx/releases/activity
     java:
       - androidx.activity:activity
     kotlin:
       - androidx.activity:activity-ktx
-  - name: Appcompat
+  - name: appcompat
     document: https://developer.android.com/jetpack/androidx/releases/appcompat
     java:
       - androidx.appcompat:appcompat
+      - androidx.appcompat:appcompat-resources
+  - name: camera
+    document: https://developer.android.com/jetpack/androidx/releases/camera
+    java:
+      - androidx.camera:camera-camera2
+      - androidx.camera:camera-core
+      - androidx.camera:camera-extensions
+      - androidx.camera:camera-lifecycle
+      - androidx.camera:camera-view
+  - name: compose
+    document: https://developer.android.com/jetpack/androidx/releases/compose
+    java:
+      - androidx.compose.ui:ui
+      - androidx.compose.ui:ui-tooling
+      - androidx.compose.foundation:foundation
+      - androidx.compose.material:material
+      - androidx.compose.material:material-icons-core
+      - androidx.compose.material:material-icons-extended
+      - androidx.compose.runtime:runtime-livedata
+      - androidx.compose.runtime:runtime-rxjava2
+      - content: androidx.compose.ui:ui-test-junit4
+        type: androidTestImplementation
+  - name: fragment
+    document: https://developer.android.com/jetpack/androidx/releases/fragment
+    java:
+      - androidx.fragment:fragment
+      - content: androidx.fragment:fragment-testing
+        type: debugImplementation
+    kotlin:
+      - androidx.fragment:fragment-ktx
+      - content: androidx.fragment:fragment-testing
+        type: debugImplementation
+  - name: hilt-navigation-fragment
+    document: https://developer.android.com/training/dependency-injection/hilt-jetpack#viewmodel-navigation
+    java:
+      - androidx.hilt:hilt-navigation-fragment
+  - name: hilt-navigation-compose
+    document: https://developer.android.com/jetpack/compose/libraries#hilt
+    java:
+      - androidx.hilt:hilt-navigation-compose
+  - name: hilt-workmanager
+    document: https://developer.android.com/training/dependency-injection/hilt-jetpack#workmanager
+    java:
+      - androidx.hilt:hilt-work
+      - content: androidx.hilt:hilt-compiler
+        type: annotationProcessor
+    kotlin:
+      - androidx.hilt:hilt-work
+      - content: androidx.hilt:hilt-compiler
+        type: kapt
+  - name: lifecycle
+    document: https://developer.android.com/jetpack/androidx/releases/lifecycle
+    java:
+      - androidx.lifecycle:lifecycle-runtime
+      - content: androidx.lifecycle:lifecycle-compiler
+        type: annotationProcessor
+    kotlin:
+      - androidx.lifecycle:lifecycle-runtime-ktx
+      - content: androidx.lifecycle:lifecycle-compiler
+        type: kapt
+  - name: lifecycle-viewmodel
+    document: https://developer.android.com/jetpack/androidx/releases/lifecycle
+    java:
+      - androidx.lifecycle:lifecycle-viewmodel
+      - androidx.lifecycle:lifecycle-viewmodel-savedstate
+    kotlin:
+      - androidx.lifecycle:lifecycle-viewmodel-ktx
+      - androidx.lifecycle:lifecycle-viewmodel-savedstate
+  - name: lifecycle-livedata
+    document: https://developer.android.com/jetpack/androidx/releases/lifecycle
+    java:
+      - androidx.lifecycle:lifecycle-livedata
+    kotlin:
+      - androidx.lifecycle:lifecycle-livedata-ktx
+  - name: lifecycle-viewmodel-compose
+    document: https://developer.android.com/jetpack/androidx/releases/lifecycle
+    java:
+      - androidx.lifecycle:lifecycle-viewmodel-compose
+  - name: lifecycle-optional
+    document: https://developer.android.com/jetpack/androidx/releases/lifecycle
+    java:
+      - androidx.lifecycle:lifecycle-service
+      - androidx.lifecycle:lifecycle-process
+      - androidx.lifecycle:lifecycle-reactivestreams
+      - content: androidx.arch.core:core-testing
+        type: testImplementation
+    kotlin:
+      - androidx.lifecycle:lifecycle-service
+      - androidx.lifecycle:lifecycle-process
+      - androidx.lifecycle:lifecycle-reactivestreams-ktx
+      - content: androidx.arch.core:core-testing
+        type: testImplementation
+  - name: material
+    document: https://material.io
+    java:
+      - com.google.android.material
+  - name: navigation
+    document: https://developer.android.com/jetpack/androidx/releases/navigation
+    java:
+      - androidx.navigation:navigation-fragment
+      - androidx.navigation:navigation-ui
+      - content: androidx.navigation:navigation-testing
+        type: androidTestImplementation
+    kotlin:
+      - androidx.navigation:navigation-fragment-ktx
+      - androidx.navigation:navigation-ui-ktx
+      - content: androidx.navigation:navigation-testing
+        type: androidTestImplementation
+  - name: navigation-dynamic-features-fragment
+    document: https://developer.android.com/jetpack/androidx/releases/navigation
+    java:
+      - androidx.navigation:navigation-dynamic-features-fragment
+  - name: navigation-compose
+    document: https://developer.android.com/jetpack/androidx/releases/navigation
+    java:
+      - androidx.navigation:navigation-compose
+  - name: paging
+    document: https://developer.android.com/jetpack/androidx/releases/paging
+    java:
+      - androidx.paging:paging-runtime
+      - content: androidx.paging:paging-common
+        type: testImplementation
+    kotlin:
+      - androidx.paging:paging-runtime-ktx
+      - content: androidx.paging:paging-common-ktx
+        type: testImplementation
+  - name: paging-rxjava2
+    document: https://developer.android.com/jetpack/androidx/releases/paging
+    java:
+      - androidx.paging:paging-rxjava2
+    kotlin:
+      - androidx.paging:paging-rxjava2-ktx
+  - name: paging-rxjava3
+    document: https://developer.android.com/jetpack/androidx/releases/paging
+    java:
+      - androidx.paging:paging-rxjava3
+  - name: paging-guava
+    document: https://developer.android.com/jetpack/androidx/releases/paging
+    java:
+      - androidx.paging:paging-guava
+  - name: paging-compose
+    document: https://developer.android.com/jetpack/androidx/releases/paging
+    java:
+      - androidx.paging:paging-compose
+  - name: room
+    document: https://developer.android.com/jetpack/androidx/releases/room
+    java:
+      - androidx.room:room-runtime
+      - content: androidx.room:room-compiler
+        type: annotationProcessor
+    kotlin:
+      - androidx.room:room-runtime
+      - content: androidx.room:room-compiler
+        type: kapt
+      - androidx.room:room-ktx
+  - name: room-rxjava2
+    document: https://developer.android.com/jetpack/androidx/releases/room
+    java:
+      - androidx.room:room-rxjava2
+  - name: room-guava
+    document: https://developer.android.com/jetpack/androidx/releases/room
+    java:
+      - androidx.room:room-guava
+  - name: room-testing
+    document: https://developer.android.com/jetpack/androidx/releases/room
+    java:
+      - content: androidx.room:room-testing
+        type: testImplementation
+  - name: work
+    document: https://developer.android.com/jetpack/androidx/releases/work
+    java:
+      - androidx.work:work-runtime
+    kotlin:
+      - androidx.work:work-runtime-ktx
+  - name: work-rxjava2
+    document: https://developer.android.com/jetpack/androidx/releases/work
+    java:
+      - androidx.work:work-rxjava2
+  - name: work-gcm
+    document: https://developer.android.com/jetpack/androidx/releases/work
+    java:
+      - androidx.work:work-gcm
+  - name: work-testing
+    document: https://developer.android.com/jetpack/androidx/releases/work
+    java:
+      - androidx.work:work-testing
+  - name: work-multiprocess
+    document: https://developer.android.com/jetpack/androidx/releases/work
+    java:
+      - androidx.work:work-multiprocess

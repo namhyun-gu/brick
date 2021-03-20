@@ -20,6 +20,22 @@ Compose latest android library dependencies
 pip install -r requirements.txt
 ```
 
+# Supported libraries
+
+- Jetpack
+  - activity
+  - appcompat
+  - camera
+  - compose
+  - fragment
+  - hilt
+  - lifecycle
+  - material
+  - navigation
+  - paging
+  - room
+  - work
+
 ## How to use
 
 ```bash
