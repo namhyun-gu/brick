@@ -20,7 +20,7 @@ Compose latest android library dependencies
 pip install -r requirements.txt
 ```
 
-# Supported libraries
+## Supported libraries
 
 - Jetpack
   - activity
