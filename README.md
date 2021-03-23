@@ -16,50 +16,52 @@ Compose latest android library dependencies
 
 ## Getting Started
 
-```bash
-pip install -r requirements.txt
-```
+Download [latest release](https://github.com/namhyun-gu/brick/releases)
 
 ## Supported libraries
 
 - Jetpack
-  - activity
-  - appcompat
-  - camera
-  - compose
-  - fragment
-  - hilt
-  - lifecycle
-  - material
-  - navigation
-  - paging
-  - room
-  - work
+    - activity
+    - appcompat
+    - camera
+    - compose
+    - fragment
+    - hilt
+    - lifecycle
+    - material
+    - navigation
+    - paging
+    - room
+    - work
 
 ## How to use
 
 ```bash
-python main.py
+# Windows
+./brick.exe
+
+# Linux
+./brick
 ```
 
 ### Subcommands
 
 - ### get
-  - Arguments  
-    `{section}:{group}` `{section}:{group}` ...
-       
-    e.g jetpack:Activity  
-    
-  - Options  
-    - `-l`, `--lang` : Project Language (kotlin or java), defaults kotlin
-    - `-g`, `--gradle` : Gradle Language (groovy or kotlin), default groovy
+    - Arguments  
+      `{section}:{group}` `{section}:{group}` ...
 
-  - Examples
-    ```bash
-    $ python main.py get jetpack:Activity jetpack:Appcompat
-    implementation "androidx.appcompat:appcompat:1.3.0-beta01"
-    implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+      e.g jetpack:Activity
 
-    $ python main.py get jetpack:Appcompat --gradle=kotlin 
-    implementation("androidx.appcompat:appcompat:1.3.0-beta01")
-    ```
+    - Options
+        - `-l`, `--lang` : Project Language (kotlin or java), defaults kotlin
+        - `-g`, `--gradle` : Gradle Language (groovy or kotlin), default groovy
+
+    - Examples
+      ```bash
+      $ ./brick get jetpack:Activity jetpack:Appcompat
+      implementation "androidx.appcompat:appcompat:1.3.0-beta01"
+      implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+  
+      $ ./brick get jetpack:Appcompat --gradle=kotlin 
+      implementation("androidx.appcompat:appcompat:1.3.0-beta01")
+      ```
