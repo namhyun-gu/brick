@@ -1,5 +1,0 @@
-requests
-inquirer
-clipboard
-pyyaml
-click

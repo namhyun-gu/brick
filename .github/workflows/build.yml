@@ -1,0 +1,22 @@
+name: Build
+on: [ push ]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-go@v2
+      - name: Copy data
+        run: cp ./data ./bin/data
+      - name: Download dependencies
+        run: go mod download
+      - name: Build
+        run: |
+          env GOOS=windows GOARCH=amd64 go build -o ./bin/brick.exe ./cmd/brick/main.go
+          env GOOS=linux GOARCH=amd64 go build -o ./bin/brick ./cmd/brick/main.go
+      - name: Install zip packages
+        run: sudo apt install zip
+      - run: cd bin && zip -r brick.zip .
+      - uses: actions/upload-artifact@v2
+        with:
+          path: bin/brick.zip

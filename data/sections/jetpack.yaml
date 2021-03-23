@@ -1,4 +1,4 @@
-name: Jetpack
+name: jetpack
 source: google
 content:
   - name: activity
