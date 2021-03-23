@@ -3,7 +3,7 @@ package get
 import (
 	"fmt"
 	"github.com/namhyun-gu/brick/internal/resource"
-	"github.com/namhyun-gu/brick/internal/util"
+	"github.com/namhyun-gu/brick/internal/utils"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
 	"github.com/thoas/go-funk"
@@ -14,24 +14,6 @@ import (
 type GetOptions struct {
 	ProjectLanguage string
 	GradleLanguage  string
-}
-
-type Argument struct {
-	SectionName string
-	GroupName   string
-}
-
-func (argument *Argument) IsValid(sections map[string]resource.Section, ) bool {
-	if _, contain := sections[argument.SectionName]; !contain {
-		return false
-	}
-
-	section := sections[argument.SectionName]
-
-	if _, contain := section.Groups[argument.GroupName]; !contain {
-		return false
-	}
-	return true
 }
 
 type FetchJob struct {
@@ -57,19 +39,15 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 		Use:  "get [{section}:{group}]",
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			requests := make([]Argument, 0)
+			requests := make([]*utils.Argument, 0)
 
 			for _, arg := range args {
-				var sectionName, groupName string
-				err := util.Unpack(strings.Split(arg, ":"), &sectionName, &groupName)
+				argument, err := utils.ParseArgument(arg)
 				if err != nil {
-					return fmt.Errorf("invalid argument (arg: [%s])", arg)
+					return err
 				}
 
-				requests = append(requests, Argument{
-					SectionName: sectionName,
-					GroupName:   groupName,
-				})
+				requests = append(requests, argument)
 			}
 
 			executableDir := filepath.Dir(factory.Executable)
@@ -83,7 +61,7 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 				return err
 			}
 
-			return RunGet(opts, sources, sections, requests)
+			return getRun(opts, sources, sections, requests)
 		},
 	}
 
@@ -97,15 +75,15 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 	return cmd
 }
 
-func RunGet(
+func getRun(
 	opts *GetOptions,
 	sources map[string]string,
 	sections map[string]resource.Section,
-	arguments []Argument,
+	arguments []*utils.Argument,
 ) error {
-	validArguments := funk.Filter(arguments, func(argument Argument) bool {
+	validArguments := funk.Filter(arguments, func(argument *utils.Argument) bool {
 		return argument.IsValid(sections)
-	}).([]Argument)
+	}).([]*utils.Argument)
 	argumentMap := groupArguments(validArguments)
 	jobs := make([]FetchJob, 0)
 
@@ -144,7 +122,7 @@ func RunGet(
 			return err
 		}
 
-		dependencyString := util.MakeDependencyString(
+		dependencyString := utils.MakeDependencyString(
 			job.Configuration,
 			job.GroupId,
 			job.ArtifactId,
@@ -165,7 +143,7 @@ func makeFetchJob(
 	dependency resource.Dependency,
 ) FetchJob {
 	var groupId, artifactId string
-	_ = util.Unpack(strings.Split(dependency.Content, ":"), &groupId, &artifactId)
+	_ = utils.Unpack(strings.Split(dependency.Content, ":"), &groupId, &artifactId)
 
 	return FetchJob{
 		SectionName:   sectionName,
@@ -177,7 +155,7 @@ func makeFetchJob(
 	}
 }
 
-func groupArguments(arguments []Argument) map[string][]string {
+func groupArguments(arguments []*utils.Argument) map[string][]string {
 	m := make(map[string][]string)
 	for _, argument := range arguments {
 		if _, contain := m[argument.SectionName]; !contain {

@@ -5,7 +5,7 @@
 </p> -->
 
 <p align="center">
-Compose latest android library dependencies
+Compose latest android dependencies
 </p>
 
 ## Preview
@@ -44,24 +44,76 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 ./brick
 ```
 
-### Subcommands
+## Subcommands
 
-- ### get
-    - Arguments  
-      `{section}:{group}` `{section}:{group}` ...
+### `get`
 
-      e.g jetpack:Activity
+> Get latest library
 
-    - Options
-        - `-l`, `--lang` : Project Language (kotlin or java), defaults kotlin
-        - `-g`, `--gradle` : Gradle Language (groovy or kotlin), default groovy
+- Arguments  
+    `{section}:{group}` `{section}:{group}` ...
 
-    - Examples
-      ```bash
-      $ ./brick get jetpack:Activity jetpack:Appcompat
-      implementation "androidx.appcompat:appcompat:1.3.0-beta01"
-      implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
-  
-      $ ./brick get jetpack:Appcompat --gradle=kotlin 
-      implementation("androidx.appcompat:appcompat:1.3.0-beta01")
+    e.g jetpack:activity
+
+- Options
+  - `-l`, `--lang` : Project Language (`kotlin` or `java`), defaults `kotlin`
+  - `-g`, `--gradle` : Gradle Language (`groovy` or `kotlin`), default `groovy`
+  - Examples
+    ```bash
+    $ ./brick get jetpack:activity jetpack:appcompat
+    implementation "androidx.appcompat:appcompat:1.3.0-beta01"
+    implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+
+    $ ./brick get jetpack:appcompat --gradle=kotlin 
+    implementation("androidx.appcompat:appcompat:1.3.0-beta01")
       ```
+### `doc`
+
+> Open document in browser
+
+- Argument  
+  `{section}:{group}`
+
+  e.g jetpack:activity
+
+- Examples
+  ```bash
+  $ ./brick doc jetpack:activity
+  Opening https://developer.android.com/jetpack/androidx/releases/activity in your browser.
+  ```
+
+### `list`
+
+> Print supported libraries
+
+- Options
+  - `-s`, `--section`: Section Name, defaults `""`
+
+- Examples
+  ```bash
+  $ ./brick list
+  └── jetpack
+    ├── activity
+    ├── appcompat
+    ├── camera
+    ├── compose
+    ├── fragment
+    ├── hilt-navigation-compose
+    ├── hilt-navigation-fragment
+    ├── hilt-workmanager
+    ├── lifecycle
+    ...
+
+  $ ./brick list --section jetpack
+  jetpack
+  ├── activity
+  ├── appcompat
+  ├── camera
+  ├── compose
+  ├── fragment
+  ├── hilt-navigation-compose
+  ├── hilt-navigation-fragment
+  ├── hilt-workmanager
+  ├── lifecycle
+  ...
+  ```

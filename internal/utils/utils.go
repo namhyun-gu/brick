@@ -1,7 +1,8 @@
-package util
+package utils
 
 import (
 	"fmt"
+	"github.com/namhyun-gu/brick/internal/browser"
 )
 
 func Unpack(slice []string, vars ...*string) error {
@@ -28,4 +29,12 @@ func MakeDependencyString(
 		return fmt.Sprintf("%s(\"%s\")", configuration, dependencyNotation)
 	}
 	return ""
+}
+
+func OpenInBrowser(url string) error {
+	browserCmd, err := browser.Command(url)
+	if err != nil {
+		return err
+	}
+	return browserCmd.Run()
 }
