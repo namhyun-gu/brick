@@ -2,6 +2,7 @@
 
 <p align="center">
     <img alt="Build Status" src="https://github.com/namhyun-gu/brick/actions/workflows/build.yml/badge.svg"/>
+    <img alt="GitHub release" src="https://img.shields.io/github/v/release/namhyun-gu/brick">
     <!-- <img alt="License" src="https://img.shields.io/badge/License-Apache%202.0-blue.svg"/> -->
 </p>
 
