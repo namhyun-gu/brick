@@ -65,7 +65,11 @@ func parseSection(content []byte) Section {
 	}
 
 	sectionName := fmt.Sprintf("%v", m["name"])
-	sectionSource := fmt.Sprintf("%v", m["source"])
+
+	var sectionSource = ""
+	if _, contain := m["source"]; contain {
+		sectionSource = fmt.Sprintf("%v", m["source"])
+	}
 	groupSlice := m["content"].([]interface{})
 	groups := toGroupMap(groupSlice)
 
