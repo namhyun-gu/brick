@@ -22,11 +22,25 @@ func MakeDependencyString(
 	version string,
 	gradleLanguage string,
 ) string {
-	dependencyNotation := fmt.Sprintf("%s:%s:%s", groupId, artifactId, version)
-	if gradleLanguage == "groovy" {
-		return fmt.Sprintf("%s \"%s\"", configuration, dependencyNotation)
-	} else if gradleLanguage == "kotlin" {
-		return fmt.Sprintf("%s(\"%s\")", configuration, dependencyNotation)
+	var dependencyNotation string
+	if version != "" {
+		dependencyNotation = fmt.Sprintf("%s:%s:%s", groupId, artifactId, version)
+	} else {
+		dependencyNotation = fmt.Sprintf("%s:%s", groupId, artifactId)
+	}
+
+	if configuration == "platform" {
+		if gradleLanguage == "groovy" {
+			return fmt.Sprintf("%s platform(\"%s\")", "implementation", dependencyNotation)
+		} else if gradleLanguage == "kotlin" {
+			return fmt.Sprintf("%s(platform(\"%s\"))", "implementation", dependencyNotation)
+		}
+	} else {
+		if gradleLanguage == "groovy" {
+			return fmt.Sprintf("%s \"%s\"", configuration, dependencyNotation)
+		} else if gradleLanguage == "kotlin" {
+			return fmt.Sprintf("%s(\"%s\")", configuration, dependencyNotation)
+		}
 	}
 	return ""
 }
