@@ -23,18 +23,35 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 ## Supported libraries
 
 - Jetpack
-    - activity
-    - appcompat
-    - camera
-    - compose
-    - fragment
-    - hilt
-    - lifecycle
-    - material
-    - navigation
-    - paging
-    - room
-    - work
+  - activity
+  - appcompat
+  - camera
+  - compose
+  - fragment
+  - hilt
+  - lifecycle
+  - material
+  - navigation
+  - paging
+  - room
+  - work
+
+- DI
+  - dagger2
+  - dagger-hilt
+  - koin
+
+- Networking
+  - retrofit
+  - okhttp
+  - okhttp-bom
+  - okhttp-mockwebserver
+  - fast-android-networking
+  - volley
+  - cronet
+
+- Firebase
+  - [All products](https://firebase.google.com/support/release-notes/android)
 
 ## How to use
 

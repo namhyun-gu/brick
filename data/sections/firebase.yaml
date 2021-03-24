@@ -1,0 +1,168 @@
+name: firebase
+source: google
+content:
+  - name: google-services-plugin
+    document: https://firebase.google.com/docs/android/setup
+    java:
+      - content: com.google.gms:google-services
+        type: classpath
+  - name: firebase-bom
+    document: https://firebase.google.com/
+    java:
+      - content: com.google.firebase:firebase-bom
+        type: platform
+      - content: com.google.android.gms:play-services-ads
+        ignore: true
+      - content: com.google.firebase:firebase-analytics
+        ignore: true
+      - content: com.google.firebase:firebase-appindexing
+        ignore: true
+      - content: com.google.firebase:firebase-auth
+        ignore: true
+      - content: com.google.firebase:firebase-firestore
+        ignore: true
+      - content: com.google.firebase:firebase-functions
+        ignore: true
+      - content: com.google.firebase:firebase-messaging
+        ignore: true
+      - content: com.google.firebase:firebase-storage
+        ignore: true
+      - content: com.google.firebase:firebase-crashlytics
+        ignore: true
+      - content: com.google.firebase:firebase-dynamic-links
+        ignore: true
+      - content: com.google.firebase:firebase-ml-modeldownloader
+        ignore: true
+      - content: com.google.firebase:firebase-inappmessaging
+        ignore: true
+      - content: com.google.firebase:firebase-inappmessaging-display
+        ignore: true
+      - content: com.google.firebase:firebase-perf
+        ignore: true
+      - content: com.google.firebase:firebase-database
+        ignore: true
+      - content: com.google.firebase:firebase-config
+        ignore: true
+    kotlin:
+      - content: com.google.firebase:firebase-bom
+        type: platform
+      - content: com.google.android.gms:play-services-ads
+        ignore: true
+      - content: com.google.firebase:firebase-analytics-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-appindexing
+        ignore: true
+      - content: com.google.firebase:firebase-auth-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-firestore-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-functions-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-messaging-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-storage-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-crashlytics-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-dynamic-links-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-inappmessaging-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-inappmessaging-display-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-perf-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-database-ktx
+        ignore: true
+      - content: com.google.firebase:firebase-config-ktx
+        ignore: true
+  - name: admob
+    document: https://firebase.google.com/docs/admob/android/quick-start
+    java:
+      - com.google.android.gms:play-services-ads
+  - name: analytics
+    document: https://firebase.google.com/docs/analytics/get-started?platform=android
+    java:
+      - com.google.firebase:firebase-analytics
+    kotlin:
+      - com.google.firebase:firebase-analytics-ktx
+  - name: appindexing
+    document: https://firebase.google.com/docs/app-indexing/android/app
+    java:
+      - com.google.firebase:firebase-appindexing
+  - name: auth
+    document: https://firebase.google.com/docs/auth/android/start
+    java:
+      - com.google.firebase:firebase-auth
+    kotlin:
+      - com.google.firebase:firebase-auth-ktx
+  - name: firestore
+    document: https://firebase.google.com/docs/firestore
+    java:
+      - com.google.firebase:firebase-firestore
+    kotlin:
+      - com.google.firebase:firebase-firestore-ktx
+  - name: functions
+    document: https://firebase.google.com/docs/functions
+    java:
+      - com.google.firebase:firebase-functions
+    kotlin:
+      - com.google.firebase:firebase-functions-ktx
+  - name: messaging
+    document: https://firebase.google.com/docs/cloud-messaging/android/client
+    java:
+      - com.google.firebase:firebase-messaging
+    kotlin:
+      - com.google.firebase:firebase-messaging-ktx
+  - name: storage
+    document: https://firebase.google.com/docs/storage/android/start
+    java:
+      - com.google.firebase:firebase-storage
+    kotlin:
+      - com.google.firebase:firebase-storage-ktx
+  - name: crashlytics
+    document: https://firebase.google.com/docs/crashlytics/get-started?platform=android
+    java:
+      - com.google.firebase:firebase-crashlytics
+    kotlin:
+      - com.google.firebase:firebase-crashlytics-ktx
+  - name: dynamic-links
+    document: https://firebase.google.com/docs/dynamic-links/android/create
+    java:
+      - com.google.firebase:firebase-dynamic-links
+    kotlin:
+      - com.google.firebase:firebase-dynamic-links-ktx
+  - name: ml-modeldownloader
+    document: https://firebase.google.com/docs/ml-kit
+    java:
+      - com.google.firebase:firebase-ml-modeldownloader
+  - name: inappmessaging
+    document: https://firebase.google.com/docs/in-app-messaging
+    java:
+      - com.google.firebase:firebase-inappmessaging
+    kotlin:
+      - com.google.firebase:firebase-inappmessaging-ktx
+  - name: inappmessaging-display
+    document: https://firebase.google.com/docs/in-app-messaging
+    java:
+      - com.google.firebase:firebase-inappmessaging-display
+    kotlin:
+      - com.google.firebase:firebase-inappmessaging-display-ktx
+  - name: perf
+    document: https://firebase.google.com/docs/perf-mon/get-started-android
+    java:
+      - com.google.firebase:firebase-perf
+    kotlin:
+      - com.google.firebase:firebase-perf-ktx
+  - name: database
+    document: https://firebase.google.com/docs/database
+    java:
+      - com.google.firebase:firebase-database
+    kotlin:
+      - com.google.firebase:firebase-database-ktx
+  - name: config
+    document: https://firebase.google.com/docs/remote-config/use-config-android
+    java:
+      - com.google.firebase:firebase-config
+    kotlin:
+      - com.google.firebase:firebase-config-ktx

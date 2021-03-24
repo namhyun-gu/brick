@@ -1,0 +1,35 @@
+name: networking
+source: mavenCentral
+content:
+  - name: retrofit
+    document: https://square.github.io/retrofit/
+    java:
+      - com.squareup.retrofit2:retrofit
+  - name: okhttp
+    document: https://square.github.io/okhttp/
+    java:
+      - com.squareup.okhttp3:okhttp
+  - name: okhttp-bom
+    document: https://square.github.io/okhttp/
+    java:
+      - content: com.squareup.okhttp3:okhttp-bom
+        type: platform
+      - content: com.squareup.okhttp3:okhttp
+        ignore: true
+  - name: okhttp-mockserver
+    document: https://square.github.io/okhttp/
+    java:
+      - com.squareup.okhttp3:mockwebserver
+  - name: fast-android-networking
+    document: https://github.com/amitshekhariitbhu/Fast-Android-Networking
+    java:
+      - com.amitshekhar.android:android-networking
+  - name: volley
+    document: https://developer.android.com/training/volley
+    java:
+      - com.android.volley:volley
+  - name: cronet
+    source: google
+    document: https://developer.android.com/guide/topics/connectivity/cronet
+    java:
+      - com.google.android.gms:play-services-cronet

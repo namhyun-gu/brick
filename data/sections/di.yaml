@@ -1,0 +1,54 @@
+name: di
+content:
+  - name: dagger-hilt
+    source: google
+    document: https://developer.android.com/jetpack/androidx/releases/hilt
+    java:
+      - content: com.google.dagger:hilt-android-gradle-plugin
+        type: classpath
+      - com.google.dagger:hilt-android
+      - content: com.google.dagger:hilt-compiler
+        type: annotationProcessor
+    kotlin:
+      - content: com.google.dagger:hilt-android-gradle-plugin
+        type: classpath
+      - com.google.dagger:hilt-android
+      - content: com.google.dagger:hilt-compiler
+        type: kapt
+  - name: dagger2
+    source: mavenCentral
+    document: https://dagger.dev/
+    java:
+      - com.google.dagger:dagger
+      - com.google.dagger:dagger-android
+      - content: com.google.dagger:dagger-compiler
+        type: annotationProcessor
+      - content: com.google.dagger:dagger-android-processor
+        type: annotationProcessor
+    kotlin:
+      - com.google.dagger:dagger
+      - com.google.dagger:dagger-android
+      - content: com.google.dagger:dagger-compiler
+        type: kapt
+      - content: com.google.dagger:dagger-android-processor
+        type: kapt
+  - name: koin
+    source: mavenCentral
+    document: https://insert-koin.io/
+    java:
+      - io.insert-koin:koin-android
+  - name: koin-ext
+    source: mavenCentral
+    document: https://insert-koin.io/
+    java:
+      - io.insert-koin:koin-android-ext
+  - name: koin-workmanager
+    source: mavenCentral
+    document: https://insert-koin.io/
+    java:
+      - io.insert-koin:koin-androidx-workmanager
+  - name: koin-compose
+    source: mavenCentral
+    document: https://insert-koin.io/
+    java:
+      - io.insert-koin:koin-androidx-compose
