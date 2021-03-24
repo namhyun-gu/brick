@@ -16,12 +16,10 @@ type GetOptions struct {
 }
 
 type FetchJob struct {
-	SectionName   string
-	GroupName     string
-	GroupId       string
-	ArtifactId    string
-	Configuration string
-	Source        string
+	SectionName string
+	GroupName   string
+	Dependency  resource.Dependency
+	Source      string
 }
 
 type FetchJobResult struct {
@@ -99,39 +97,55 @@ func getRun(
 				groupSource = source
 			}
 
+			var dependencies []resource.Dependency
+
 			if opts.ProjectLanguage == "kotlin" && len(group.Kotlin) > 0 {
-				newJobs := funk.Map(group.Kotlin, func(dependency resource.Dependency) FetchJob {
-					return makeFetchJob(sectionName, groupName, groupSource, dependency)
-				}).([]FetchJob)
-
-				jobs = append(jobs, newJobs...)
+				dependencies = group.Kotlin
 			} else {
-				newJobs := funk.Map(group.Java, func(dependency resource.Dependency) FetchJob {
-					return makeFetchJob(sectionName, groupName, groupSource, dependency)
-				}).([]FetchJob)
-
-				jobs = append(jobs, newJobs...)
+				dependencies = group.Java
 			}
+
+			newJobs := funk.Map(dependencies, func(dependency resource.Dependency) FetchJob {
+				return FetchJob{
+					SectionName: sectionName,
+					GroupName:   groupName,
+					Dependency:  dependency,
+					Source:      groupSource,
+				}
+			}).([]FetchJob)
+
+			jobs = append(jobs, newJobs...)
 		}
 	}
 
 	output := make([]string, 0)
 	for _, job := range jobs {
-		metadata, err := resource.FetchMetadata(
-			job.GroupId,
-			job.ArtifactId,
-			job.Source,
-		)
-
+		var groupId, artifactId string
+		err := utils.Unpack(strings.Split(job.Dependency.Content, ":"), &groupId, &artifactId)
 		if err != nil {
 			return err
 		}
 
+		latestVersion := ""
+		if !job.Dependency.Ignore {
+			metadata, err := resource.FetchMetadata(
+				groupId,
+				artifactId,
+				job.Source,
+			)
+
+			if err != nil {
+				return err
+			}
+
+			latestVersion = metadata.Versions.Latest
+		}
+
 		dependencyString := utils.MakeDependencyString(
-			job.Configuration,
-			job.GroupId,
-			job.ArtifactId,
-			metadata.Versions.Latest,
+			job.Dependency.Configuration,
+			groupId,
+			artifactId,
+			latestVersion,
 			opts.GradleLanguage,
 		)
 		output = append(output, dependencyString)
@@ -139,25 +153,6 @@ func getRun(
 
 	fmt.Print(strings.Join(output, "\n"))
 	return nil
-}
-
-func makeFetchJob(
-	sectionName string,
-	groupName string,
-	source string,
-	dependency resource.Dependency,
-) FetchJob {
-	var groupId, artifactId string
-	_ = utils.Unpack(strings.Split(dependency.Content, ":"), &groupId, &artifactId)
-
-	return FetchJob{
-		SectionName:   sectionName,
-		GroupName:     groupName,
-		GroupId:       groupId,
-		ArtifactId:    artifactId,
-		Configuration: dependency.Configuration,
-		Source:        source,
-	}
 }
 
 func groupArguments(arguments []*utils.Argument) map[string][]string {

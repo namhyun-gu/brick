@@ -24,6 +24,7 @@ type Group struct {
 type Dependency struct {
 	Configuration string
 	Content       string
+	Ignore        bool
 }
 
 func GetSections(owner string, repo string) (map[string]Section, error) {
@@ -134,9 +135,17 @@ func parseDependency(dep interface{}) Dependency {
 		}
 	default:
 		m := dep.(map[string]interface{})
+		ignore := false
+		if _, contain := m["ignore"]; contain {
+			if m["ignore"].(string) == "true" {
+				ignore = true
+			}
+		}
+
 		return Dependency{
 			Configuration: m["type"].(string),
 			Content:       m["content"].(string),
+			Ignore:        ignore,
 		}
 	}
 }
