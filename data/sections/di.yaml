@@ -1,7 +1,7 @@
 name: di
 content:
   - name: dagger-hilt
-    source: google
+    source: mavenCentral
     document: https://developer.android.com/jetpack/androidx/releases/hilt
     java:
       - content: com.google.dagger:hilt-android-gradle-plugin
