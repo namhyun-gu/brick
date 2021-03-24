@@ -19,15 +19,16 @@ jobs:
           env GOOS=linux GOARCH=amd64 go build -o ./bin/brick ./cmd/brick/main.go
       - name: Install zip packages
         run: sudo apt install zip
-      - run: cd bin && zip -r brick.zip .
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          path: bin/brick.zip
+      - name: Zip artifacts
+        run: |
+          cd ./bin
+          zip -r brick-windows-amd64.zip brick.exe
+          zip -r brick-linux-amd64.zip brick
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
         with:
           repo_token: ${{ secrets.GITHUB_TOKEN }}
           prerelease: false
           files: |
-            ./bin/brick.zip
+            ./bin/brick-windows-amd64.zip
+            ./bin/brick-linux-amd64.zip
