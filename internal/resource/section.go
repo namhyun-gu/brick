@@ -137,7 +137,7 @@ func parseDependency(dep interface{}) Dependency {
 		m := dep.(map[string]interface{})
 		ignore := false
 		if _, contain := m["ignore"]; contain {
-			if m["ignore"].(string) == "true" {
+			if m["ignore"].(bool) {
 				ignore = true
 			}
 		}
