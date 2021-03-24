@@ -142,8 +142,13 @@ func parseDependency(dep interface{}) Dependency {
 			}
 		}
 
+		configuration := "implementation"
+		if _, contain := m["type"]; contain {
+			configuration = m["type"].(string)
+		}
+
 		return Dependency{
-			Configuration: m["type"].(string),
+			Configuration: configuration,
 			Content:       m["content"].(string),
 			Ignore:        ignore,
 		}
