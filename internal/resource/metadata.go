@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"encoding/xml"
 	"fmt"
+	"github.com/namhyun-gu/brick/api"
 	"io/ioutil"
 	"net/http"
-	"path/filepath"
 	"strings"
 )
 
@@ -28,13 +28,21 @@ type LibraryVersion struct {
 	Version []string `xml:"version"`
 }
 
-func GetSources(rootPath string) (map[string]string, error) {
-	sourcesPath := filepath.Join(rootPath, "./data/sources.json")
-	content, err := ioutil.ReadFile(sourcesPath)
+func GetSources(owner string, repo string) (map[string]string, error) {
+	content, err := api.GetContents(owner, repo, "data/sources.json")
 	if err != nil {
 		return nil, err
 	}
-	return parseSources(content)
+
+	rawContent, err := api.GetRawContent(content.DownloadUrl)
+	if err != nil {
+		return nil, err
+	}
+
+	if rawContent == nil {
+		return nil, fmt.Errorf("raw content is nil")
+	}
+	return parseSources(rawContent)
 }
 
 func parseSources(content []byte) (map[string]string, error) {

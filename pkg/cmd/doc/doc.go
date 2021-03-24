@@ -6,7 +6,6 @@ import (
 	"github.com/namhyun-gu/brick/internal/utils"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
-	"path/filepath"
 )
 
 func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
@@ -19,8 +18,7 @@ func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 				return err
 			}
 
-			executableDir := filepath.Dir(factory.Executable)
-			sections, err := resource.GetSections(executableDir)
+			sections, err := resource.GetSections("namhyun-gu", "brick")
 			if err != nil {
 				return err
 			}

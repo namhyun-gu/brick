@@ -2,10 +2,9 @@ package resource
 
 import (
 	"fmt"
+	"github.com/namhyun-gu/brick/api"
 	"gopkg.in/yaml.v3"
-	"io/ioutil"
 	"log"
-	"path/filepath"
 )
 
 type Section struct {
@@ -26,21 +25,31 @@ type Dependency struct {
 	Content       string
 }
 
-func GetSections(rootPath string) (map[string]Section, error) {
-	contentsPath := filepath.Join(rootPath, "./data/sections")
-	files, err := ioutil.ReadDir(contentsPath)
+func GetSections(owner string, repo string) (map[string]Section, error) {
+	trees, err := api.GetTrees(owner, repo, "", true)
 	if err != nil {
 		return nil, err
 	}
 
 	var sections = make(map[string]Section)
-	for _, file := range files {
-		path := filepath.Join(contentsPath, file.Name())
-		content, err := ioutil.ReadFile(path)
+
+	sectionNodes := trees.FilterPath("data/sections/")
+	for _, sectionNode := range sectionNodes {
+		content, err := api.GetContents(owner, repo, sectionNode.Path)
 		if err != nil {
 			return nil, err
 		}
-		section := parseSection(content)
+
+		rawContent, err := api.GetRawContent(content.DownloadUrl)
+		if err != nil {
+			return nil, err
+		}
+
+		if rawContent == nil {
+			return nil, fmt.Errorf("raw content is nil")
+		}
+
+		section := parseSection(rawContent)
 		sections[section.Name] = section
 	}
 	return sections, nil

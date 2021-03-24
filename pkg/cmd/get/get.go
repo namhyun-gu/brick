@@ -7,7 +7,6 @@ import (
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
 	"github.com/thoas/go-funk"
-	"path/filepath"
 	"strings"
 )
 
@@ -50,13 +49,12 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 				requests = append(requests, argument)
 			}
 
-			executableDir := filepath.Dir(factory.Executable)
-			sources, err := resource.GetSources(executableDir)
+			sources, err := resource.GetSources("namhyun-gu", "brick")
 			if err != nil {
 				return err
 			}
 
-			sections, err := resource.GetSections(executableDir)
+			sections, err := resource.GetSections("namhyun-gu", "brick")
 			if err != nil {
 				return err
 			}

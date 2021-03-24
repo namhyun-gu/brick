@@ -5,7 +5,6 @@ import (
 	"github.com/namhyun-gu/brick/internal/resource"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
-	"path/filepath"
 	"sort"
 	"strings"
 )
@@ -20,8 +19,7 @@ func NewCmdList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			executableDir := filepath.Dir(factory.Executable)
-			sections, err := resource.GetSections(executableDir)
+			sections, err := resource.GetSections("namhyun-gu", "brick")
 			if err != nil {
 				return err
 			}
@@ -89,7 +87,7 @@ func sortedSectionNames(sections map[string]resource.Section) []string {
 	idx := 0
 	sectionNames := make([]string, len(sections))
 
-	for sectionName, _ := range sections {
+	for sectionName := range sections {
 		sectionNames[idx] = sectionName
 		idx += 1
 	}
@@ -101,7 +99,7 @@ func sortedGroupNames(groups map[string]resource.Group) []string {
 	idx := 0
 	groupNames := make([]string, len(groups))
 
-	for groupName, _ := range groups {
+	for groupName := range groups {
 		groupNames[idx] = groupName
 		idx += 1
 	}
