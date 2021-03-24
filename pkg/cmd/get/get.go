@@ -92,7 +92,7 @@ func getRun(
 
 			var groupSource string
 			if group.Source != "" {
-				groupSource = getSource(sources, section.Source)
+				groupSource = getSource(sources, group.Source)
 			} else {
 				groupSource = source
 			}
