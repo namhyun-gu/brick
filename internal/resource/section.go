@@ -15,6 +15,7 @@ type Section struct {
 
 type Group struct {
 	Name     string
+	Source   string
 	Document string
 	Java     []Dependency
 	Kotlin   []Dependency
@@ -89,6 +90,11 @@ func parseGroup(group interface{}) Group {
 	name := groupItem["name"].(string)
 	document := groupItem["document"].(string)
 
+	var source = ""
+	if _, contain := groupItem["source"]; contain {
+		source = groupItem["source"].(string)
+	}
+
 	javaSlice := groupItem["java"].([]interface{})
 	java := mapToDependency(javaSlice)
 
@@ -100,6 +106,7 @@ func parseGroup(group interface{}) Group {
 
 	return Group{
 		Name:     name,
+		Source:   source,
 		Document: document,
 		Java:     java,
 		Kotlin:   kotlin,

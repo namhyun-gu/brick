@@ -92,15 +92,22 @@ func getRun(
 		for _, groupName := range groupNames {
 			group := section.Groups[groupName]
 
+			var groupSource string
+			if group.Source != "" {
+				groupSource = getSource(sources, section.Source)
+			} else {
+				groupSource = source
+			}
+
 			if opts.ProjectLanguage == "kotlin" && len(group.Kotlin) > 0 {
 				newJobs := funk.Map(group.Kotlin, func(dependency resource.Dependency) FetchJob {
-					return makeFetchJob(sectionName, groupName, source, dependency)
+					return makeFetchJob(sectionName, groupName, groupSource, dependency)
 				}).([]FetchJob)
 
 				jobs = append(jobs, newJobs...)
 			} else {
 				newJobs := funk.Map(group.Java, func(dependency resource.Dependency) FetchJob {
-					return makeFetchJob(sectionName, groupName, source, dependency)
+					return makeFetchJob(sectionName, groupName, groupSource, dependency)
 				}).([]FetchJob)
 
 				jobs = append(jobs, newJobs...)
