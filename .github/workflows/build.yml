@@ -9,20 +9,16 @@ jobs:
     steps:
       - uses: actions/checkout@v2
       - uses: actions/setup-go@v2
-      - name: Copy data
-        run: mkdir bin && cp -r ./data ./bin/data
       - name: Download dependencies
         run: go mod download
       - name: Build
         run: |
           env GOOS=windows GOARCH=amd64 go build -o ./bin/brick.exe ./cmd/brick/main.go
-          env GOOS=linux GOARCH=amd64 go build -o ./bin/brick ./cmd/brick/main.go
-      - name: Install zip packages
-        run: sudo apt install zip
-      - name: Zip artifacts
-        run: |
+          env GOOS=linux GOARCH=amd64 go build -o ./bin/brick-linux-amd64 ./cmd/brick/main.go
+      - run: |
           cd ./bin
           zip -r brick-windows-amd64.zip brick.exe
+          mv brick-linux-amd64 brick
           zip -r brick-linux-amd64.zip brick
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
