@@ -1,0 +1,22 @@
+name: rx
+source: mavenCentral
+content:
+  - name: rxjava3
+    document: https://github.com/ReactiveX/RxJava
+    java:
+      - io.reactivex.rxjava3:rxjava
+  - name: rxjava3-snapshot
+    document: https://github.com/ReactiveX/RxJava
+    source: https://oss.jfrog.org/libs-snapshot
+    java:
+      - content: io.reactivex.rxjava3:rxjava
+        type: compile
+  - name: rxkotlin3
+    document: https://github.com/ReactiveX/RxKotlin
+    java:
+      - io.reactivex.rxjava3:rxkotlin
+  - name: rxandroid
+    document: https://github.com/ReactiveX/RxAndroid
+    source: https://oss.jfrog.org/libs-snapshot
+    java:
+      - io.reactivex.rxjava3:rxandroid

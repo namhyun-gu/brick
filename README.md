@@ -53,6 +53,20 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 - Firebase
   - [All products](https://firebase.google.com/support/release-notes/android)
 
+- Kotlin Coroutines
+  - kotlinx-coroutines-bom
+  - kotlinx-coroutines-core
+  - kotlinx-coroutines-core-common
+  - kotlinx-coroutines-test
+  - kotlinx-coroutines-debug
+  - kotlinx-coroutines-play-services
+
+- Rx
+  - rxjava3
+  - rxjava3-snapshot
+  - rxkotlin3
+  - rxandroid
+
 ## How to use
 
 ```bash

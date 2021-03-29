@@ -1,0 +1,34 @@
+name: coroutines
+source: mavenCentral
+content:
+  - name: kotlinx-coroutines-bom
+    document: https://kotlinlang.org/docs/coroutines-guide.html
+    java:
+      - content: org.jetbrains.kotlinx:kotlinx-coroutines-bom
+        type: platform
+  - name: kotlinx-coroutines-core
+    document: https://kotlinlang.org/docs/coroutines-guide.html
+    java:
+      - org.jetbrains.kotlinx:kotlinx-coroutines-core
+  - name: kotlinx-coroutines-core-common
+    document: https://kotlinlang.org/docs/coroutines-guide.html
+    java:
+      - org.jetbrains.kotlinx:kotlinx-coroutines-core-common
+  - name: kotlinx-coroutines-android
+    document: https://developer.android.com/kotlin/coroutines
+    java:
+      - org.jetbrains.kotlinx:kotlinx-coroutines-android
+  - name: kotlinx-coroutines-test
+    document: https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-test/README.md
+    java:
+      - content: org.jetbrains.kotlinx:kotlinx-coroutines-test
+        type: testImplementation
+  - name: kotlinx-coroutines-debug
+    document: https://github.com/Kotlin/kotlinx.coroutines/blob/master/kotlinx-coroutines-debug/README.md
+    java:
+      - content: org.jetbrains.kotlinx:kotlinx-coroutines-debug
+        type: testImplementation
+  - name: kotlinx-coroutines-play-services
+    document: https://github.com/Kotlin/kotlinx.coroutines/tree/master/integration/kotlinx-coroutines-play-services
+    java:
+      - org.jetbrains.kotlinx:kotlinx-coroutines-play-services
