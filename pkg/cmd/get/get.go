@@ -2,6 +2,7 @@ package get
 
 import (
 	"fmt"
+	"github.com/namhyun-gu/brick/api"
 	"github.com/namhyun-gu/brick/internal/resource"
 	"github.com/namhyun-gu/brick/internal/utils"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
@@ -45,6 +46,15 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 				}
 
 				requests = append(requests, argument)
+			}
+
+			limit, err := api.GetRateLimit()
+			if err != nil {
+				return err
+			}
+
+			if limit.Rate.Remaining == 0 {
+				return fmt.Errorf("github API limit exceeded (limit: %d, reset: %d)", limit.Rate.Limit, limit.Rate.Reset)
 			}
 
 			sources, err := resource.GetSources("namhyun-gu", "brick")

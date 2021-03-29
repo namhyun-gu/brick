@@ -2,6 +2,7 @@ package list
 
 import (
 	"fmt"
+	"github.com/namhyun-gu/brick/api"
 	"github.com/namhyun-gu/brick/internal/resource"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
@@ -19,6 +20,15 @@ func NewCmdList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list",
 		RunE: func(cmd *cobra.Command, args []string) error {
+			limit, err := api.GetRateLimit()
+			if err != nil {
+				return err
+			}
+
+			if limit.Rate.Remaining == 0 {
+				return fmt.Errorf("github API limit exceeded (limit: %d, reset: %d)", limit.Rate.Limit, limit.Rate.Reset)
+			}
+
 			sections, err := resource.GetSections("namhyun-gu", "brick")
 			if err != nil {
 				return err
