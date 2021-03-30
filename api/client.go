@@ -81,14 +81,10 @@ func (c Client) REST(hostname string, method string, p string, body io.Reader, d
 	return nil
 }
 
-func (c Client) GET(hostname string, p string, body io.Reader) ([]byte, error) {
+func (c Client) GET(hostname string, p string) ([]byte, error) {
 	reqUrl := hostname + p
-	req, err := http.NewRequest("GET", reqUrl, body)
-	if err != nil {
-		return nil, err
-	}
 
-	resp, err := c.http.Do(req)
+	resp, err := c.http.Get(reqUrl)
 	if err != nil {
 		return nil, err
 	}

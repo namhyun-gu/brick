@@ -1,7 +1,6 @@
 package api
 
 import (
-	"bytes"
 	"encoding/xml"
 	"fmt"
 	"strings"
@@ -28,8 +27,7 @@ type LibraryVersion struct {
 func GetMetadata(client *Client, source string, groupId string, artifactId string) (*LibraryMetadata, error) {
 	path := fmt.Sprintf("/%s/%s/maven-metadata.xml", strings.ReplaceAll(groupId, ".", "/"), artifactId)
 
-	r := bytes.NewReader([]byte(`{}`))
-	body, err := client.GET(source, path, r)
+	body, err := client.GET(source, path)
 
 	if err != nil {
 		return nil, err
