@@ -18,7 +18,7 @@ func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 				return err
 			}
 
-			client := api.NewClient()
+			client := factory.Client
 			err = cmdutil.IsExceededRateLimit(client)
 			if err != nil {
 				return err

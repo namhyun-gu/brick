@@ -19,7 +19,8 @@ func NewCmdList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			client := api.NewClient()
+			client := factory.Client
+			
 			err := cmdutil.IsExceededRateLimit(client)
 			if err != nil {
 				return err

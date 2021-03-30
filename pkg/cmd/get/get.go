@@ -37,7 +37,7 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			arguments := make([]*utils.Argument, 0)
-			client := api.NewClient()
+			client := factory.Client
 
 			for _, arg := range args {
 				argument, err := utils.ParseArgument(arg)
