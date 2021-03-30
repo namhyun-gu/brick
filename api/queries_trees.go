@@ -1,10 +1,8 @@
 package api
 
 import (
-	"encoding/json"
+	"bytes"
 	"fmt"
-	"io/ioutil"
-	"net/http"
 	"strings"
 )
 
@@ -34,32 +32,20 @@ func (tree Trees) FilterPath(path string) []Node {
 	return newNodes
 }
 
-func GetTrees(owner string, repo string, treeSha string, recursive bool) (*Trees, error) {
+func GetTrees(client *Client, owner string, repo string, treeSha string, recursive bool) (*Trees, error) {
 	if treeSha == "" {
 		treeSha = "HEAD"
 	}
 
-	url := fmt.Sprintf("https://api.github.com/repos/%s/%s/git/trees/%s", owner, repo, treeSha)
+	path := fmt.Sprintf("repos/%s/%s/git/trees/%s", owner, repo, treeSha)
 	if recursive {
-		url += "?recursive=1"
+		path += "?recursive=1"
 	}
 
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("failed get trees (code: %d)", resp.StatusCode)
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
 	var trees Trees
-	err = json.Unmarshal(body, &trees)
+
+	r := bytes.NewReader([]byte(`{}`))
+	err := client.REST("https://api.github.com/", "GET", path, r, &trees)
 	if err != nil {
 		return nil, err
 	}

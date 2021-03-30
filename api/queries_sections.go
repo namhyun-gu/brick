@@ -1,10 +1,8 @@
-package resource
+package api
 
 import (
 	"fmt"
-	"github.com/namhyun-gu/brick/api"
 	"gopkg.in/yaml.v3"
-	"log"
 )
 
 type Section struct {
@@ -27,42 +25,36 @@ type Dependency struct {
 	Ignore        bool
 }
 
-func GetSections(owner string, repo string) (map[string]Section, error) {
-	trees, err := api.GetTrees(owner, repo, "", true)
+func GetSections(client *Client, owner string, repo string, branch string) (map[string]*Section, error) {
+	trees, err := GetTrees(client, owner, repo, "", true)
 	if err != nil {
 		return nil, err
 	}
 
-	var sections = make(map[string]Section)
-
-	sectionNodes := trees.FilterPath("data/sections/")
+	var sections = make(map[string]*Section)
+	sectionNodes := trees.FilterPath("data/")
 	for _, sectionNode := range sectionNodes {
-		content, err := api.GetContents(owner, repo, sectionNode.Path)
+		content, err := GetRawContent(client, owner, repo, branch, sectionNode.Path)
 		if err != nil {
 			return nil, err
 		}
 
-		rawContent, err := api.GetRawContent(content.DownloadUrl)
+		section, err := parseSection(content)
 		if err != nil {
 			return nil, err
 		}
 
-		if rawContent == nil {
-			return nil, fmt.Errorf("raw content is nil")
-		}
-
-		section := parseSection(rawContent)
 		sections[section.Name] = section
 	}
 	return sections, nil
 }
 
-func parseSection(content []byte) Section {
+func parseSection(content []byte) (*Section, error) {
 	m := make(map[interface{}]interface{})
 	err := yaml.Unmarshal(content, &m)
 
 	if err != nil {
-		log.Fatal(err)
+		return nil, err
 	}
 
 	sectionName := fmt.Sprintf("%v", m["name"])
@@ -74,11 +66,11 @@ func parseSection(content []byte) Section {
 	groupSlice := m["content"].([]interface{})
 	groups := toGroupMap(groupSlice)
 
-	return Section{
+	return &Section{
 		Name:   sectionName,
 		Source: sectionSource,
 		Groups: groups,
-	}
+	}, nil
 }
 
 func toGroupMap(slice []interface{}) map[string]Group {

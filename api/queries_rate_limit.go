@@ -1,10 +1,7 @@
 package api
 
 import (
-	"encoding/json"
-	"fmt"
-	"io/ioutil"
-	"net/http"
+	"bytes"
 )
 
 type RateLimit struct {
@@ -26,26 +23,10 @@ type RateLimitStatus struct {
 	Rate      RateLimit          `json:"rate"`
 }
 
-func GetRateLimit() (*RateLimitStatus, error) {
-	url := "https://api.github.com/rate_limit"
-
-	resp, err := http.Get(url)
-	if err != nil {
-		return nil, err
-	}
-
-	if resp.StatusCode != 200 {
-		return nil, fmt.Errorf("failed get rate limit (code: %d)", resp.StatusCode)
-	}
-
-	defer resp.Body.Close()
-	body, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-
+func GetRateLimit(client *Client) (*RateLimitStatus, error) {
 	var rateLimitStatus RateLimitStatus
-	err = json.Unmarshal(body, &rateLimitStatus)
+	r := bytes.NewReader([]byte(`{}`))
+	err := client.REST("https://api.github.com/", "GET", "rate_limit", r, &rateLimitStatus)
 	if err != nil {
 		return nil, err
 	}
