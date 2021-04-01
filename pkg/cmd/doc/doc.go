@@ -2,10 +2,12 @@ package doc
 
 import (
 	"fmt"
-	"github.com/namhyun-gu/brick/api"
+	"github.com/namhyun-gu/brick/internal/bucket"
+	"github.com/namhyun-gu/brick/internal/section"
 	"github.com/namhyun-gu/brick/internal/utils"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
+	"path/filepath"
 )
 
 func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
@@ -18,15 +20,23 @@ func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 				return err
 			}
 
-			client := factory.Client
-			err = cmdutil.IsExceededRateLimit(client)
+			//client := factory.Client
+			executableDir := filepath.Dir(factory.Executable)
+			bucketRepository := factory.BucketRepository
+
+			buckets, err := bucketRepository.Read()
 			if err != nil {
 				return err
 			}
 
-			sections, err := api.GetSections(client, "namhyun-gu", "brick", "main")
-			if err != nil {
-				return err
+			sections := make(map[string]*section.Section)
+			for _, bucketObj := range buckets {
+				bucketSections, err := bucket.ReadCache(executableDir, bucketObj)
+				if err != nil {
+					return err
+				}
+
+				sections = section.ConcatSectionMap(sections, bucketSections)
 			}
 
 			if !argument.IsValid(sections) {

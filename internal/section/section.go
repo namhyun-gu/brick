@@ -1,4 +1,4 @@
-package api
+package section
 
 import (
 	"fmt"
@@ -25,31 +25,7 @@ type Dependency struct {
 	Ignore        bool
 }
 
-func GetSections(client *Client, owner string, repo string, branch string) (map[string]*Section, error) {
-	trees, err := GetTrees(client, owner, repo, "", true)
-	if err != nil {
-		return nil, err
-	}
-
-	var sections = make(map[string]*Section)
-	sectionNodes := trees.FilterPath("data/")
-	for _, sectionNode := range sectionNodes {
-		content, err := GetRawContent(client, owner, repo, branch, sectionNode.Path)
-		if err != nil {
-			return nil, err
-		}
-
-		section, err := parseSection(content)
-		if err != nil {
-			return nil, err
-		}
-
-		sections[section.Name] = section
-	}
-	return sections, nil
-}
-
-func parseSection(content []byte) (*Section, error) {
+func ParseSection(content []byte) (*Section, error) {
 	m := make(map[interface{}]interface{})
 	err := yaml.Unmarshal(content, &m)
 
@@ -71,6 +47,17 @@ func parseSection(content []byte) (*Section, error) {
 		Source: sectionSource,
 		Groups: groups,
 	}, nil
+}
+
+func ConcatSectionMap(a, b map[string]*Section) map[string]*Section {
+	newMap := make(map[string]*Section)
+	for key, s := range a {
+		newMap[key] = s
+	}
+	for key, s := range b {
+		newMap[key] = s
+	}
+	return newMap
 }
 
 func toGroupMap(slice []interface{}) map[string]Group {

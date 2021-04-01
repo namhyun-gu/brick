@@ -2,7 +2,7 @@ package utils
 
 import (
 	"fmt"
-	"github.com/namhyun-gu/brick/api"
+	"github.com/namhyun-gu/brick/internal/section"
 	"strings"
 )
 
@@ -11,7 +11,7 @@ type Argument struct {
 	GroupName   string
 }
 
-func (argument *Argument) IsValid(sections map[string]*api.Section) bool {
+func (argument *Argument) IsValid(sections map[string]*section.Section) bool {
 	if _, contain := sections[argument.SectionName]; !contain {
 		return false
 	}

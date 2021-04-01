@@ -3,6 +3,7 @@ package utils
 import (
 	"fmt"
 	"github.com/namhyun-gu/brick/internal/browser"
+	"os"
 )
 
 func Unpack(slice []string, vars ...*string) error {
@@ -51,4 +52,9 @@ func OpenInBrowser(url string) error {
 		return err
 	}
 	return browserCmd.Run()
+}
+
+func ExistFile(path string) bool {
+	_, err := os.Stat(path)
+	return os.IsExist(err)
 }
