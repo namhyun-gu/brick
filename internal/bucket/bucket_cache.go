@@ -12,7 +12,12 @@ import (
 )
 
 func WriteCache(client *api.Client, path string, bucket *Bucket) error {
-	trees, err := api.GetTrees(client, bucket.Owner, bucket.Repo, "", true)
+	branch, err := api.GetBranch(client, bucket.Owner, bucket.Repo, bucket.Branch)
+	if err != nil {
+		return err
+	}
+
+	trees, err := api.GetTrees(client, bucket.Owner, bucket.Repo, branch.Sha, true)
 	if err != nil {
 		return err
 	}
