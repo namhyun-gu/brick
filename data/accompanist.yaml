@@ -1,0 +1,24 @@
+name: accompanist
+source: mavenCentral
+content:
+  - name: insets
+    document: https://github.com/google/accompanist/tree/main/insets
+    java:
+      - com.google.accompanist:accompanist-insets
+  - name: systemuicontroller
+    document: https://github.com/google/accompanist/tree/main/systemuicontroller
+    java:
+      - com.google.accompanist:accompanist-systemuicontroller
+  - name: appcompat-theme
+    document: https://github.com/google/accompanist/tree/main/appcompat-theme
+    java:
+      - com.google.accompanist:accompanist-appcompat-theme
+  - name: pager
+    document: https://github.com/google/accompanist/tree/main/pager
+    java:
+      - com.google.accompanist:accompanist-pager
+  - name: flowlayout
+    document: https://github.com/google/accompanist/tree/main/flowlayout
+    java:
+      - com.google.accompanist:accompanist-flowlayout
+  
