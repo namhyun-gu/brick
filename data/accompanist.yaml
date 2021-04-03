@@ -1,6 +1,10 @@
 name: accompanist
 source: mavenCentral
 content:
+  - name: coil
+    document: https://github.com/google/accompanist/tree/main/coil
+    java:
+      - com.google.accompanist:accompanist-coil
   - name: insets
     document: https://github.com/google/accompanist/tree/main/insets
     java:
