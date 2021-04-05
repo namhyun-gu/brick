@@ -23,83 +23,86 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 ## Supported libraries
 
 - Jetpack
-  - activity
-  - appcompat
-  - camera
-  - compose
-  - fragment
-  - hilt
-  - lifecycle
-  - material
-  - navigation
-  - paging
-  - room
-  - work
+    - activity
+    - appcompat
+    - camera
+    - compose
+    - fragment
+    - hilt
+    - lifecycle
+    - material
+    - navigation
+    - paging
+    - room
+    - work
 
 - DI
-  - dagger2
-  - dagger-hilt
-  - koin
+    - dagger2
+    - dagger-hilt
+    - koin
 
 - Networking
-  - retrofit
-  - okhttp
-  - okhttp-bom
-  - okhttp-mockwebserver
-  - fast-android-networking
-  - volley
-  - cronet
+    - retrofit
+    - okhttp
+    - okhttp-bom
+    - okhttp-mockwebserver
+    - fast-android-networking
+    - volley
+    - cronet
 
 - Firebase
-  - [All products](https://firebase.google.com/support/release-notes/android)
+    - [All products](https://firebase.google.com/support/release-notes/android)
 
 - Kotlin Coroutines
-  - kotlinx-coroutines-bom
-  - kotlinx-coroutines-core
-  - kotlinx-coroutines-core-common
-  - kotlinx-coroutines-test
-  - kotlinx-coroutines-debug
-  - kotlinx-coroutines-play-services
+    - kotlinx-coroutines-bom
+    - kotlinx-coroutines-core
+    - kotlinx-coroutines-core-common
+    - kotlinx-coroutines-test
+    - kotlinx-coroutines-debug
+    - kotlinx-coroutines-play-services
 
 - Rx
-  - rxjava3
-  - rxjava3-snapshot
-  - rxkotlin3
-  - rxandroid
+    - rxjava3
+    - rxjava3-snapshot
+    - rxkotlin3
+    - rxandroid
 
 ## How to use
 
 ```bash
 # Windows
-./brick.exe
+./brick.exe [command]
 
 # Linux
-./brick
+./brick [command]
 ```
 
-## Subcommands
+> ⚠ Require run `update` command before first run.
+
+## Commands
 
 ### `get`
 
 > Get latest library
 
 - Arguments  
-    `{section}:{group}` `{section}:{group}` ...
+  `{section}:{group}` `{section}:{group}` ...
 
-    e.g jetpack:activity
+  e.g jetpack:activity
 
 - Options
-  - `-l`, `--lang` : Project Language (`kotlin` or `java`), defaults `kotlin`
-  - `-g`, `--gradle` : Gradle Language (`groovy` or `kotlin`), default `groovy`
-  - Examples
-    ```bash
-    $ ./brick get jetpack:activity jetpack:appcompat
-    implementation "androidx.appcompat:appcompat:1.3.0-beta01"
-    implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+    - `-l`, `--lang` : Project Language (`kotlin` or `java`), defaults `kotlin`
+    - `-g`, `--gradle` : Gradle Language (`groovy` or `kotlin`), defaults `groovy`
+    - Examples
+      ```bash
+      $ ./brick get jetpack:activity jetpack:appcompat
+      implementation "androidx.appcompat:appcompat:1.3.0-beta01"
+      implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+  
+      $ ./brick get jetpack:appcompat --gradle=kotlin 
+      implementation("androidx.appcompat:appcompat:1.3.0-beta01")
+        ```
 
-    $ ./brick get jetpack:appcompat --gradle=kotlin 
-    implementation("androidx.appcompat:appcompat:1.3.0-beta01")
-      ```
 ### `doc`
 
 > Open document in browser
@@ -120,7 +123,7 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 > Print supported libraries
 
 - Options
-  - `-s`, `--section`: Section Name, defaults `""`
+    - `-s`, `--section`: Section Name, defaults `""`
 
 - Examples
   ```bash
@@ -150,3 +153,56 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
   ├── lifecycle
   ...
   ```
+
+### `update`
+
+> Update bucket caches
+
+- Examples
+  ```bash
+  $ ./brick update
+  Updating namhyun-gu:brick...
+  ```
+
+### `bucket`
+
+> Management bucket
+
+- `add`
+
+  > Add new bucket
+
+  - Argument  
+    `{owner}:{repo}@{branch}`  
+
+    e.g namhyun-gu:brick@main
+  - Options
+    - `-p`, `--path`: Bucket default path, defaults `""`
+  - Example
+    ```bash
+    $ ./brick bucket add namhyun-gu:brick@main --path data/
+    Added namhyun-gu:brick to bucket.
+    ```
+
+- `remove`
+
+  > Remove bucket
+
+  - Argument  
+    `{owner}:{repo}`  
+  - Example
+    ```bash
+    $ ./brick bucket remove namhyun-gu:brick
+    Removed namhyun-gu:brick to bucket.
+    ```
+
+- `list`
+
+  > Print bucket list
+
+  - Example
+    ```bash
+    $ ./brick bucket list
+    namhyun-gu:brick@main data/
+    Found 1 buckets.
+    ```
