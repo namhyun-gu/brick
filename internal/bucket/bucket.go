@@ -6,6 +6,10 @@ import (
 	"strings"
 )
 
+var DefaultBuckets = []*Bucket{
+	NewBucket("namhyun-gu:brick@main", "data/"),
+}
+
 type Bucket struct {
 	Owner  string `json:"owner"`
 	Repo   string `json:"repo"`

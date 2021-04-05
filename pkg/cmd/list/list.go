@@ -21,19 +21,20 @@ func NewCmdList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			//client := factory.Client
-			executableDir := filepath.Dir(factory.Executable)
-			bucketRepository := factory.BucketRepository
-
-			//err := cmdutil.IsExceededRateLimit(client)
-			//if err != nil {
-			//	return err
-			//}
-
-			buckets, err := bucketRepository.Read()
+			repository := factory.BucketRepository
+			buckets, err := repository.Read()
 			if err != nil {
 				return err
 			}
+
+			if buckets == nil {
+				buckets, err = cmdutil.InitBucket(repository)
+				if err != nil {
+					return err
+				}
+			}
+
+			executableDir := filepath.Dir(factory.Executable)
 
 			sections := make(map[string]*section.Section)
 			for _, bucketObj := range buckets {

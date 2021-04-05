@@ -52,7 +52,12 @@ func (repo Repository) Remove(bucketId string) error {
 }
 
 func (repo Repository) Read() ([]*Bucket, error) {
-	bytes, err := (*repo.cache).Read()
+	c := *repo.cache
+	if !c.Exist() {
+		return nil, nil
+	}
+
+	bytes, err := c.Read()
 	if err != nil {
 		return nil, err
 	}

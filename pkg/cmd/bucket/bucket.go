@@ -28,15 +28,28 @@ func NewCmdBucketAdd(factory *cmdutil.Factory) *cobra.Command {
 		Use:  "add [owner:repo@branch]",
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucketExpression := args[0]
-			newBucket := bucket.NewBucket(bucketExpression, opts.Path)
-			bucketRepository := factory.BucketRepository
-			err := bucketRepository.Save(newBucket)
+			repository := factory.BucketRepository
+			buckets, err := repository.Read()
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Added %s to bucket.\n", newBucket.Id())
-			return nil
+
+			if buckets == nil {
+				buckets, err = cmdutil.InitBucket(repository)
+				if err != nil {
+					return err
+				}
+			}
+
+			bucketExpression := args[0]
+			newBucket := bucket.NewBucket(bucketExpression, opts.Path)
+			err = repository.Save(newBucket)
+			if err != nil {
+				return err
+			}
+
+			_, err = fmt.Fprintf(factory.IO.Out, "Added %s to bucket.\n", newBucket.Id())
+			return err
 		},
 	}
 	cmd.Flags().StringVarP(&opts.Path, "path", "p", "", "Bucket root path")
@@ -48,14 +61,27 @@ func NewCmdBucketRemove(factory *cmdutil.Factory) *cobra.Command {
 		Use:  "remove [owner:repo]",
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucketId := args[0]
-			bucketRepository := factory.BucketRepository
-			err := bucketRepository.Remove(bucketId)
+			repository := factory.BucketRepository
+			buckets, err := repository.Read()
 			if err != nil {
 				return err
 			}
-			fmt.Printf("Removed %s to bucket.\n", bucketId)
-			return nil
+
+			if buckets == nil {
+				buckets, err = cmdutil.InitBucket(repository)
+				if err != nil {
+					return err
+				}
+			}
+
+			bucketId := args[0]
+			err = repository.Remove(bucketId)
+			if err != nil {
+				return err
+			}
+
+			fmt.Fprintf(factory.IO.Out, "Removed %s to bucket.\n", bucketId)
+			return err
 		},
 	}
 	return cmd
@@ -65,19 +91,26 @@ func NewCmdBucketList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use: "list",
 		RunE: func(cmd *cobra.Command, args []string) error {
-			bucketRepository := factory.BucketRepository
-			buckets, err := bucketRepository.Read()
+			repository := factory.BucketRepository
+			buckets, err := repository.Read()
 			if err != nil {
 				return err
 			}
 
+			if buckets == nil {
+				buckets, err = cmdutil.InitBucket(repository)
+				if err != nil {
+					return err
+				}
+			}
+
 			if len(buckets) == 0 {
-				fmt.Println("No buckets.")
+				fmt.Fprintf(factory.IO.Out, "No buckets.")
 			} else {
 				for _, b := range buckets {
-					fmt.Println(b.String())
+					fmt.Fprintf(factory.IO.Out, b.String())
 				}
-				fmt.Printf("\nFound %d buckets.\n", len(buckets))
+				fmt.Fprintf(factory.IO.Out, "\nFound %d buckets.\n", len(buckets))
 			}
 			return nil
 		},

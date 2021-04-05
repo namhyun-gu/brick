@@ -15,23 +15,27 @@ func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 		Use:  "doc [{section}:{group}]",
 		Args: cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
-			argument, err := utils.ParseArgument(args[0])
+			repository := factory.BucketRepository
+			buckets, err := repository.Read()
 			if err != nil {
 				return err
 			}
 
-			//client := factory.Client
-			executableDir := filepath.Dir(factory.Executable)
-			bucketRepository := factory.BucketRepository
+			if buckets == nil {
+				buckets, err = cmdutil.InitBucket(repository)
+				if err != nil {
+					return err
+				}
+			}
 
-			buckets, err := bucketRepository.Read()
+			argument, err := utils.ParseArgument(args[0])
 			if err != nil {
 				return err
 			}
 
 			sections := make(map[string]*section.Section)
 			for _, bucketObj := range buckets {
-				bucketSections, err := bucket.ReadCache(executableDir, bucketObj)
+				bucketSections, err := bucket.ReadCache(filepath.Dir(factory.Executable), bucketObj)
 				if err != nil {
 					return err
 				}
@@ -46,7 +50,7 @@ func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 			section := sections[argument.SectionName]
 			group := section.Groups[argument.GroupName]
 
-			fmt.Printf("Opening %s in your browser.", group.Document)
+			fmt.Fprintf(factory.IO.Out, "Opening %s in your browser.", group.Document)
 			return utils.OpenInBrowser(group.Document)
 		},
 	}

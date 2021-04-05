@@ -18,19 +18,10 @@ func IsExceededRateLimit(client *api.Client) error {
 	return nil
 }
 
-func UpdateBucketCache(client *api.Client, repository *bucket.Repository, executableDir string) error {
-	buckets, err := repository.Read()
+func InitBucket(repository *bucket.Repository) ([]*bucket.Bucket, error) {
+	err := repository.SaveAll(bucket.DefaultBuckets)
 	if err != nil {
-		return err
+		return nil, err
 	}
-
-	for _, bucketObj := range buckets {
-		fmt.Printf("Update %s...", bucketObj.Id())
-		err := bucket.WriteCache(client, executableDir, bucketObj)
-		if err != nil {
-			return err
-		}
-		fmt.Println("Done")
-	}
-	return nil
+	return repository.Read()
 }

@@ -5,15 +5,14 @@ import (
 	"github.com/namhyun-gu/brick/internal/bucket"
 	"github.com/namhyun-gu/brick/internal/cache"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
+	"github.com/namhyun-gu/brick/pkg/iostreams"
 	"os"
 	"path/filepath"
 )
 
-var defaultBuckets = []*bucket.Bucket{
-	bucket.NewBucket("namhyun-gu:brick@main", "data/"),
-}
-
 func New() (*cmdutil.Factory, error) {
+	io := iostreams.System()
+
 	appExecutable := "brick"
 	if exe, err := os.Executable(); err == nil {
 		appExecutable = exe
@@ -22,23 +21,11 @@ func New() (*cmdutil.Factory, error) {
 	client := api.NewClient()
 
 	var bucketCache cache.Cache
-	bucketCachePath := filepath.Join(filepath.Dir(appExecutable), "buckets.json")
-	bucketCache = cache.NewFileCache(bucketCachePath)
+	bucketCache = cache.NewFileCache(filepath.Join(filepath.Dir(appExecutable), "buckets.json"))
 	bucketRepository := bucket.NewBucketRepository(&bucketCache)
 
-	if !bucketCache.Exist() {
-		err := bucketRepository.SaveAll(defaultBuckets)
-		if err != nil {
-			return nil, err
-		}
-
-		err = cmdutil.UpdateBucketCache(client, bucketRepository, filepath.Dir(appExecutable))
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	return &cmdutil.Factory{
+		IO:               io,
 		Client:           client,
 		BucketRepository: bucketRepository,
 		Executable:       appExecutable,
