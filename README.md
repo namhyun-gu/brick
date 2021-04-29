@@ -164,6 +164,21 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
   Updating namhyun-gu:brick...
   ```
 
+### `valid`
+
+> Validate `yaml` data file
+
+- Examples
+  ```bash
+  $ ./brick valid test.yaml
+  invalid: require 'source' field
+  invalid dependency (index: 0) in group (index: 0): require 'content' field
+  invalid group (index: 1): require 'java' or 'kotlin' field
+  invalid group (index: 2): require 'document' field
+  invalid group (index: 4): require 'name' field
+  Error: 5 issues found
+  ```
+
 ### `bucket`
 
 > Management bucket

@@ -6,6 +6,7 @@ import (
 	getCmd "github.com/namhyun-gu/brick/pkg/cmd/get"
 	listCmd "github.com/namhyun-gu/brick/pkg/cmd/list"
 	updateCmd "github.com/namhyun-gu/brick/pkg/cmd/update"
+	validCmd "github.com/namhyun-gu/brick/pkg/cmd/valid"
 	"github.com/namhyun-gu/brick/pkg/cmdutil"
 	"github.com/spf13/cobra"
 )
@@ -22,5 +23,6 @@ func NewCmdRoot(factory *cmdutil.Factory) *cobra.Command {
 	cmd.AddCommand(listCmd.NewCmdList(factory))
 	cmd.AddCommand(updateCmd.NewCmdUpdate(factory))
 	cmd.AddCommand(bucketCmd.NewCmdBucket(factory))
+	cmd.AddCommand(validCmd.NewCmdValid())
 	return cmd
 }
