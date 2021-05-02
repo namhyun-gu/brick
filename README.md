@@ -22,50 +22,84 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 
 ## Supported libraries
 
-- Jetpack
-    - activity
-    - appcompat
-    - camera
-    - compose
-    - fragment
-    - hilt
-    - lifecycle
-    - material
-    - navigation
-    - paging
-    - room
-    - work
+<details>
+  <summary>Jetpack</summary>
 
-- DI
-    - dagger2
-    - dagger-hilt
-    - koin
+  - activity
+  - appcompat
+  - camera
+  - compose
+  - fragment
+  - hilt
+  - lifecycle
+  - material
+  - navigation
+  - paging
+  - room
+  - work
+</details>
 
-- Networking
-    - retrofit
-    - okhttp
-    - okhttp-bom
-    - okhttp-mockwebserver
-    - fast-android-networking
-    - volley
-    - cronet
+<details>
+  <summary>DI</summary>
 
-- Firebase
-    - [All products](https://firebase.google.com/support/release-notes/android)
+  - dagger2
+  - dagger-hilt
+  - koin
+</details>
 
-- Kotlin Coroutines
-    - kotlinx-coroutines-bom
-    - kotlinx-coroutines-core
-    - kotlinx-coroutines-core-common
-    - kotlinx-coroutines-test
-    - kotlinx-coroutines-debug
-    - kotlinx-coroutines-play-services
+<details>
+  <summary>Networking</summary>
 
-- Rx
-    - rxjava3
-    - rxjava3-snapshot
-    - rxkotlin3
-    - rxandroid
+  - retrofit
+  - okhttp
+  - okhttp-bom
+  - okhttp-mockwebserver
+  - fast-android-networking
+  - volley
+  - cronet
+</details>
+
+<details>
+  <summary>Firebase</summary>
+
+  - Firebase Android BoM (Bill of Materials)
+  - AdMob
+  - Analytics
+  - App Indexing
+  - Authentication
+  - Cloud Firestore
+  - Cloud Functions for Firebase Client SDK
+  - Cloud Messaging
+  - Cloud Storage
+  - Crashlytics
+  - Dynamic Links
+  - Firebase ML Model Downloader API
+  - In-App Messaging
+  - In-App Messaging Display
+  - Performance Monitoring
+  - Realtime Database
+  - Remote Config
+</details>
+
+<details>
+  <summary>Coroutines</summary>
+
+  - kotlinx-coroutines-bom
+  - kotlinx-coroutines-core
+  - kotlinx-coroutines-core-common
+  - kotlinx-coroutines-test
+  - kotlinx-coroutines-debug
+  - kotlinx-coroutines-play-services
+</details>
+
+<details>
+  <summary>Rx</summary>
+
+  - rxjava3
+  - rxjava3-snapshot
+  - rxkotlin3
+  - rxandroid
+</details>
 
 ## How to use
 
