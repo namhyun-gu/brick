@@ -9,6 +9,34 @@ import (
 	"path/filepath"
 )
 
+type Lang string
+
+const (
+	Java   Lang = "java"
+	Kotlin      = "kotlin"
+)
+
+type Locator struct {
+	Node  *yaml.Node
+	Group string
+}
+
+func (loc *Locator) string() string {
+	if loc.Group == "" {
+		if loc.Node != nil {
+			return fmt.Sprintf("(line: %d, col: %d)", loc.Node.Line, loc.Node.Column)
+		} else {
+			return "(root)"
+		}
+	} else {
+		if loc.Node != nil {
+			return fmt.Sprintf("%s (line: %d, col: %d)", loc.Group, loc.Node.Line, loc.Node.Column)
+		} else {
+			return fmt.Sprintf("'%s'", loc.Group)
+		}
+	}
+}
+
 var IssueCount = 0
 
 func NewCmdValid() *cobra.Command {
@@ -31,7 +59,7 @@ func NewCmdValid() *cobra.Command {
 				return err
 			}
 
-			err = validFile(cmd, bytes)
+			err = validFile(bytes)
 			if err != nil {
 				return err
 			}
@@ -47,101 +75,118 @@ func NewCmdValid() *cobra.Command {
 	return cmd
 }
 
-func validFile(cmd *cobra.Command, content []byte) error {
-	m := make(map[string]interface{})
-	err := yaml.Unmarshal(content, &m)
+type Root struct {
+	Name    yaml.Node   `yaml:"name"`
+	Source  yaml.Node   `yaml:"source"`
+	Content []yaml.Node `yaml:"content"`
+}
+
+type Group struct {
+	Name     yaml.Node   `yaml:"name"`
+	Document yaml.Node   `yaml:"document"`
+	Java     []yaml.Node `yaml:"java"`
+	Kotlin   []yaml.Node `yaml:"kotlin"`
+}
+
+type Dependency struct {
+	Type    yaml.Node `yaml:"type"`
+	Content yaml.Node `yaml:"content"`
+}
+
+func validFile(content []byte) error {
+	var root Root
+	err := yaml.Unmarshal(content, &root)
 
 	if err != nil {
 		return err
 	}
+	return validRoot(root)
+}
 
-	checkSectionInfo(cmd, m)
+func validRoot(root Root) error {
+	if root.Source.Value == "" {
+		invalid("require 'source' field", Locator{})
+	}
 
-	if !isContain(m, "content") {
-		IssueCount++
-		cmd.Println("invalid: require 'content' field")
-	} else {
-		checkGroups(cmd, m["content"].([]interface{}))
+	if root.Name.Value == "" {
+		invalid("require 'name' field", Locator{})
+	}
+
+	if root.Content == nil {
+		invalid("require 'content' field", Locator{})
+	}
+
+	err := validContents(root.Content)
+	if err != nil {
+		return err
 	}
 	return nil
 }
 
-func checkSectionInfo(cmd *cobra.Command, m map[string]interface{}) {
-	if !isContain(m, "name") {
-		IssueCount++
-		cmd.Println("invalid: require 'name' field")
+func validContents(contents []yaml.Node) error {
+	for _, content := range contents {
+		var group Group
+		err := content.Decode(&group)
+		if err != nil {
+			return err
+		}
+		err = validGroup(content, group)
+		if err != nil {
+			return err
+		}
 	}
-
-	if !isContain(m, "source") {
-		IssueCount++
-		cmd.Println("invalid: require 'source' field")
-	}
+	return nil
 }
 
-func checkGroups(cmd *cobra.Command, contents []interface{}) {
-	for idx, v := range contents {
-		checkGroup(cmd, idx, v)
+func validGroup(node yaml.Node, group Group) error {
+	groupName := group.Name.Value
+	if group.Name.Value == "" {
+		invalid("require 'name' field", Locator{Group: groupName, Node: &node})
 	}
+	if group.Document.Value == "" {
+		invalid("require 'document' field", Locator{Group: groupName, Node: &node})
+	}
+	if group.Java == nil && group.Kotlin == nil {
+		invalid("require 'java' or 'kotlin' field", Locator{Group: groupName, Node: &node})
+	}
+	if group.Java != nil {
+		return validDependencies(Java, groupName, group.Java)
+	}
+	if group.Kotlin != nil {
+		return validDependencies(Kotlin, groupName, group.Kotlin)
+	}
+	return nil
 }
 
-func checkGroup(cmd *cobra.Command, idx int, v interface{}) {
-	m := v.(map[string]interface{})
-
-	if !isContain(m, "name") {
-		IssueCount++
-		cmd.Printf("invalid group (index: %d): require 'name' field\n", idx)
-	}
-
-	if !isContain(m, "document") {
-		IssueCount++
-		cmd.Printf("invalid group (index: %d): require 'document' field\n", idx)
-	}
-
-	containJava := isContain(m, "java")
-	containKotlin := isContain(m, "kotlin")
-
-	if !containJava && !containKotlin {
-		IssueCount++
-		cmd.Printf("invalid group (index: %d): require 'java' or 'kotlin' field\n", idx)
-	} else {
-		if isContain(m, "java") {
-			javaDeps := m["java"].([]interface{})
-			for depIdx, dep := range javaDeps {
-				checkDependency(cmd, idx, depIdx, dep)
+func validDependencies(lang Lang, group string, depNodes []yaml.Node) error {
+	group = fmt.Sprintf("%s (%s)", group, lang)
+	for _, depNode := range depNodes {
+		if depNode.Kind == yaml.ScalarNode {
+			if depNode.Value == "" {
+				invalid("require content value", Locator{Group: group, Node: &depNode})
 			}
-		}
-		if isContain(m, "kotlin") {
-			kotlinDeps := m["kotlin"].([]interface{})
-			for depIdx, dep := range kotlinDeps {
-				checkDependency(cmd, idx, depIdx, dep)
+		} else {
+			var dep Dependency
+			err := depNode.Decode(&dep)
+			if err != nil {
+				return err
 			}
+			validDependency(group, depNode, dep)
 		}
+	}
+	return nil
+}
+
+func validDependency(group string, node yaml.Node, dep Dependency) {
+	if dep.Type.Value == "" {
+		invalid("require 'type' field", Locator{Group: group, Node: &node})
+	}
+	if dep.Content.Value == "" {
+		invalid("require 'content' field", Locator{Group: group, Node: &node})
 	}
 }
 
-func checkDependency(cmd *cobra.Command, groupIdx int, idx int, dep interface{}) {
-	switch dep.(type) {
-	case string:
-		// Ignore
-	case map[string]interface{}:
-		m := dep.(map[string]interface{})
-
-		if !isContain(m, "type") {
-			IssueCount++
-			cmd.Printf("invalid dependency (index: %d) in group (index: %d): require 'type' field\n", groupIdx, idx)
-		}
-
-		if !isContain(m, "content") {
-			IssueCount++
-			cmd.Printf("invalid dependency (index: %d) in group (index: %d): require 'content' field\n", groupIdx, idx)
-		}
-	default:
-		IssueCount++
-		cmd.Printf("invalid dependency (index: %s) in group (index: %d): Invalid format\n", groupIdx, idx)
-	}
-}
-
-func isContain(m map[string]interface{}, key string) bool {
-	_, contain := m[key]
-	return contain
+func invalid(message string, locator Locator) {
+	IssueCount++
+	fmt.Printf("invalid: %s in %s\n", message, locator.string())
 }

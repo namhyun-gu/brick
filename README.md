@@ -171,12 +171,13 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 - Examples
   ```bash
   $ ./brick valid test.yaml
-  invalid: require 'source' field
-  invalid dependency (index: 0) in group (index: 0): require 'content' field
-  invalid group (index: 1): require 'java' or 'kotlin' field
-  invalid group (index: 2): require 'document' field
-  invalid group (index: 4): require 'name' field
-  Error: 5 issues found
+  invalid: require 'source' field in (root)
+  invalid: require 'name' field in (root)
+  invalid: require 'content' field in dagger-hilt (java) (line: 6, col: 9)
+  invalid: require 'java' or 'kotlin' field in dagger2 (line: 16, col: 5)
+  invalid: require 'document' field in koin (line: 19, col: 5)
+  invalid: require 'name' field in (line: 27, col: 5)
+  Error: 6 issues found
   ```
 
 ### `bucket`
@@ -187,37 +188,37 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 
   > Add new bucket
 
-  - Argument  
-    `{owner}:{repo}@{branch}`  
+    - Argument  
+      `{owner}:{repo}@{branch}`
 
-    e.g namhyun-gu:brick@main
-  - Options
-    - `-p`, `--path`: Bucket default path, defaults `""`
-  - Example
-    ```bash
-    $ ./brick bucket add namhyun-gu:brick@main --path data/
-    Added namhyun-gu:brick to bucket.
-    ```
+      e.g namhyun-gu:brick@main
+    - Options
+        - `-p`, `--path`: Bucket default path, defaults `""`
+    - Example
+      ```bash
+      $ ./brick bucket add namhyun-gu:brick@main --path data/
+      Added namhyun-gu:brick to bucket.
+      ```
 
 - `remove`
 
   > Remove bucket
 
-  - Argument  
-    `{owner}:{repo}`  
-  - Example
-    ```bash
-    $ ./brick bucket remove namhyun-gu:brick
-    Removed namhyun-gu:brick to bucket.
-    ```
+    - Argument  
+      `{owner}:{repo}`
+    - Example
+      ```bash
+      $ ./brick bucket remove namhyun-gu:brick
+      Removed namhyun-gu:brick to bucket.
+      ```
 
 - `list`
 
   > Print bucket list
 
-  - Example
-    ```bash
-    $ ./brick bucket list
-    namhyun-gu:brick@main data/
-    Found 1 buckets.
-    ```
+    - Example
+      ```bash
+      $ ./brick bucket list
+      namhyun-gu:brick@main data/
+      Found 1 buckets.
+      ```
