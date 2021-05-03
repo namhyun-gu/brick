@@ -210,8 +210,9 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
   invalid: require 'content' field in dagger-hilt (java) (line: 6, col: 9)
   invalid: require 'java' or 'kotlin' field in dagger2 (line: 16, col: 5)
   invalid: require 'document' field in koin (line: 19, col: 5)
+  invalid: unable 'io.insert-koin:koin-android' (source: null) in koin (java) (line: 21, col: 9)
   invalid: require 'name' field in (line: 27, col: 5)
-  Error: 6 issues found
+  Error: 7 issues found
   ```
 
 ### `bucket`

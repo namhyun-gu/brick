@@ -2,11 +2,14 @@ package valid
 
 import (
 	"fmt"
+	"github.com/namhyun-gu/brick/api"
+	"github.com/namhyun-gu/brick/internal/utils"
 	"github.com/spf13/cobra"
 	"gopkg.in/yaml.v3"
 	"io/ioutil"
 	"os"
 	"path/filepath"
+	"strings"
 )
 
 type Lang string
@@ -83,6 +86,7 @@ type Root struct {
 
 type Group struct {
 	Name     yaml.Node   `yaml:"name"`
+	Source   string      `yaml:"source"`
 	Document yaml.Node   `yaml:"document"`
 	Java     []yaml.Node `yaml:"java"`
 	Kotlin   []yaml.Node `yaml:"kotlin"`
@@ -116,21 +120,21 @@ func validRoot(root Root) error {
 		invalid("require 'content' field", Locator{})
 	}
 
-	err := validContents(root.Content)
+	err := validContents(root.Content, root.Source.Value)
 	if err != nil {
 		return err
 	}
 	return nil
 }
 
-func validContents(contents []yaml.Node) error {
+func validContents(contents []yaml.Node, rootSource string) error {
 	for _, content := range contents {
 		var group Group
 		err := content.Decode(&group)
 		if err != nil {
 			return err
 		}
-		err = validGroup(content, group)
+		err = validGroup(content, group, rootSource)
 		if err != nil {
 			return err
 		}
@@ -138,7 +142,7 @@ func validContents(contents []yaml.Node) error {
 	return nil
 }
 
-func validGroup(node yaml.Node, group Group) error {
+func validGroup(node yaml.Node, group Group, rootSource string) error {
 	groupName := group.Name.Value
 	if group.Name.Value == "" {
 		invalid("require 'name' field", Locator{Group: groupName, Node: &node})
@@ -149,21 +153,41 @@ func validGroup(node yaml.Node, group Group) error {
 	if group.Java == nil && group.Kotlin == nil {
 		invalid("require 'java' or 'kotlin' field", Locator{Group: groupName, Node: &node})
 	}
+
+	var source string
+	if group.Source != "" {
+		source = group.Source
+	} else {
+		source = rootSource
+	}
+
 	if group.Java != nil {
-		return validDependencies(Java, groupName, group.Java)
+		return validDependencies(Java, groupName, group.Java, source)
 	}
 	if group.Kotlin != nil {
-		return validDependencies(Kotlin, groupName, group.Kotlin)
+		return validDependencies(Kotlin, groupName, group.Kotlin, source)
 	}
 	return nil
 }
 
-func validDependencies(lang Lang, group string, depNodes []yaml.Node) error {
+func validDependencies(lang Lang, group string, depNodes []yaml.Node, source string) error {
 	group = fmt.Sprintf("%s (%s)", group, lang)
 	for _, depNode := range depNodes {
 		if depNode.Kind == yaml.ScalarNode {
 			if depNode.Value == "" {
 				invalid("require content value", Locator{Group: group, Node: &depNode})
+			}
+			if depNode.Value != "" {
+				err := validLibrary(source, depNode.Value)
+				if err != nil {
+					if source == "" {
+						source = "null"
+					}
+					invalid(fmt.Sprintf("unable '%s' (source: %s)", depNode.Value, source), Locator{
+						Node:  &depNode,
+						Group: group,
+					})
+				}
 			}
 		} else {
 			var dep Dependency
@@ -171,22 +195,50 @@ func validDependencies(lang Lang, group string, depNodes []yaml.Node) error {
 			if err != nil {
 				return err
 			}
-			validDependency(group, depNode, dep)
+			validDependency(source, group, depNode, dep)
 		}
 	}
 	return nil
 }
 
-func validDependency(group string, node yaml.Node, dep Dependency) {
+func validDependency(source string, group string, node yaml.Node, dep Dependency) {
 	if dep.Type.Value == "" {
 		invalid("require 'type' field", Locator{Group: group, Node: &node})
 	}
 	if dep.Content.Value == "" {
 		invalid("require 'content' field", Locator{Group: group, Node: &node})
 	}
+	if dep.Content.Value != "" {
+		err := validLibrary(source, dep.Content.Value)
+		if err != nil {
+			if source == "" {
+				source = "null"
+			}
+			invalid(fmt.Sprintf("unable '%s' (source: %s)", dep.Content.Value, source), Locator{Group: group, Node: &node})
+		}
+	}
 }
 
 func invalid(message string, locator Locator) {
 	IssueCount++
 	fmt.Printf("invalid: %s in %s\n", message, locator.string())
+}
+
+func validLibrary(source string, library string) error {
+	source = api.MavenSource()(source)
+
+	var groupId, artifactId string
+	err := utils.Unpack(strings.Split(library, ":"), &groupId, &artifactId)
+	if err != nil {
+		return err
+	}
+
+	path := fmt.Sprintf("/%s/%s/maven-metadata.xml", strings.ReplaceAll(groupId, ".", "/"), artifactId)
+	client := api.NewClient()
+
+	_, err = client.GET(source, path)
+	if err != nil {
+		return err
+	}
+	return nil
 }
