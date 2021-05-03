@@ -15,7 +15,7 @@ func NewCmdRoot(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:     "brick <command> <subcommand>",
 		Short:   "Compose latest android dependencies",
-		Version: "0.1.0",
+		Version: "0.1.7",
 	}
 
 	cmd.AddCommand(getCmd.NewCmdGet(factory))
