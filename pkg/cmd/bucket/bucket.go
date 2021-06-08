@@ -13,7 +13,8 @@ type AddOptions struct {
 
 func NewCmdBucket(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "bucket <command>",
+		Use:   "bucket <command>",
+		Short: "Management buckets",
 	}
 
 	cmd.AddCommand(NewCmdBucketAdd(factory))
@@ -25,8 +26,9 @@ func NewCmdBucket(factory *cmdutil.Factory) *cobra.Command {
 func NewCmdBucketAdd(factory *cmdutil.Factory) *cobra.Command {
 	opts := &AddOptions{}
 	cmd := &cobra.Command{
-		Use:  "add [owner:repo@branch]",
-		Args: cobra.MinimumNArgs(1),
+		Use:   "add [owner:repo@branch]",
+		Short: "Add bucket",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()
@@ -58,8 +60,9 @@ func NewCmdBucketAdd(factory *cmdutil.Factory) *cobra.Command {
 
 func NewCmdBucketRemove(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "remove [owner:repo]",
-		Args: cobra.MinimumNArgs(1),
+		Use:   "remove [owner:repo]",
+		Short: "Remove bucket",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()
@@ -89,7 +92,8 @@ func NewCmdBucketRemove(factory *cmdutil.Factory) *cobra.Command {
 
 func NewCmdBucketList(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "list",
+		Use:   "list",
+		Short: "Print buckets",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()

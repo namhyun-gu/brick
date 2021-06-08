@@ -44,7 +44,8 @@ var IssueCount = 0
 
 func NewCmdValid() *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "valid",
+		Use:   "valid",
+		Short: "Validate configuration file",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			wd, err := os.Getwd()
 			if err != nil {

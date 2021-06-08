@@ -12,8 +12,9 @@ import (
 
 func NewCmdDoc(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use:  "doc [{section}:{group}]",
-		Args: cobra.MinimumNArgs(1),
+		Use:   "doc [{section}:{group}]",
+		Short: "Open library document in browser",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()

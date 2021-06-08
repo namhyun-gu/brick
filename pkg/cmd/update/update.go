@@ -10,7 +10,8 @@ import (
 
 func NewCmdUpdate(factory *cmdutil.Factory) *cobra.Command {
 	cmd := &cobra.Command{
-		Use: "update",
+		Use:   "update",
+		Short: "Update bucket caches",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()

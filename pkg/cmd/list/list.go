@@ -19,7 +19,8 @@ func NewCmdList(factory *cmdutil.Factory) *cobra.Command {
 	opts := &Options{}
 
 	cmd := &cobra.Command{
-		Use: "list",
+		Use:   "list",
+		Short: "Print supported libraries",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()

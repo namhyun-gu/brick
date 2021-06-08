@@ -105,155 +105,131 @@ Download [latest release](https://github.com/namhyun-gu/brick/releases)
 
 ```bash
 # Windows
-./brick.exe [command]
+brick.exe [command]
 
 # Linux
-./brick [command]
+brick [command]
 ```
 
 > ⚠ Require run `update` command before first run.
 
 ## Commands
 
-### `get`
+To see a list of commands, run:
 
-> Get latest library
+```
+brick help
+```
 
-- Arguments  
-  `{section}:{group}` `{section}:{group}` ...
+The current commands are:
 
-  e.g jetpack:activity
+```
+bucket      Management buckets
+doc         Open library document in browser
+get         Get latest library
+help        Help about any command
+list        Print supported libraries
+update      Update bucket caches
+valid       Validate configuration file
+```
 
-- Options
-    - `-l`, `--lang` : Project Language (`kotlin` or `java`), defaults `kotlin`
-    - `-g`, `--gradle` : Gradle Language (`groovy` or `kotlin`), defaults `groovy`
-    - Examples
-      ```bash
-      $ ./brick get jetpack:activity jetpack:appcompat
-      implementation "androidx.appcompat:appcompat:1.3.0-beta01"
-      implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
+## Examples
+
+- Get latest library
+
+```bash
+$ ./brick get jetpack:activity jetpack:appcompat
+implementation "androidx.appcompat:appcompat:1.3.0-beta01"
+implementation "androidx.activity:activity-ktx:1.3.0-alpha04"
   
-      $ ./brick get jetpack:appcompat --gradle=kotlin 
-      implementation("androidx.appcompat:appcompat:1.3.0-beta01")
-        ```
+$ ./brick get jetpack:appcompat --gradle=kotlin 
+implementation("androidx.appcompat:appcompat:1.3.0-beta01")
+```
 
-### `doc`
+- Open library document in browser
 
-> Open document in browser
+```bash
+$ ./brick doc jetpack:activity
+Opening https://developer.android.com/jetpack/androidx/releases/activity in your browser.
+```
 
-- Argument  
-  `{section}:{group}`
+- Print supported libraries
 
-  e.g jetpack:activity
-
-- Examples
-  ```bash
-  $ ./brick doc jetpack:activity
-  Opening https://developer.android.com/jetpack/androidx/releases/activity in your browser.
-  ```
-
-### `list`
-
-> Print supported libraries
-
-- Options
-    - `-s`, `--section`: Section Name, defaults `""`
-
-- Examples
-  ```bash
-  $ ./brick list
-  └── jetpack
-    ├── activity
-    ├── appcompat
-    ├── camera
-    ├── compose
-    ├── fragment
-    ├── hilt-navigation-compose
-    ├── hilt-navigation-fragment
-    ├── hilt-workmanager
-    ├── lifecycle
-    ...
-
-  $ ./brick list --section jetpack
-  jetpack
+```bash
+$ ./brick list
+└── jetpack
   ├── activity
   ├── appcompat
   ├── camera
   ├── compose
   ├── fragment
-  ├── hilt-navigation-compose
-  ├── hilt-navigation-fragment
-  ├── hilt-workmanager
-  ├── lifecycle
-  ...
-  ```
+      ...
 
-### `update`
+$ ./brick list --section jetpack
+jetpack
+├── activity
+├── appcompat
+├── camera
+├── compose
+├── fragment
+    ...
+```
 
-> Update bucket caches
+- Update bucket caches
 
-- Examples
-  ```bash
-  $ ./brick update
-  Updating namhyun-gu:brick...
-  ```
+```bash
+$ ./brick update
+Updating namhyun-gu:brick...
+```
 
-### `valid`
+- Validate configuration file
 
-> Validate `yaml` data file
+```bash
+$ ./brick valid test.yaml
+invalid: require 'source' field in (root)
+invalid: require 'name' field in (root)
+invalid: require 'content' field in dagger-hilt (java) (line: 6, col: 9)
+invalid: require 'java' or 'kotlin' field in dagger2 (line: 16, col: 5)
+invalid: require 'document' field in koin (line: 19, col: 5)
+invalid: unable 'io.insert-koin:koin-android' (source: null) in koin (java) (line: 21, col: 9)
+invalid: require 'name' field in (line: 27, col: 5)
+Error: 7 issues found
+```
 
-- Examples
-  ```bash
-  $ ./brick valid test.yaml
-  invalid: require 'source' field in (root)
-  invalid: require 'name' field in (root)
-  invalid: require 'content' field in dagger-hilt (java) (line: 6, col: 9)
-  invalid: require 'java' or 'kotlin' field in dagger2 (line: 16, col: 5)
-  invalid: require 'document' field in koin (line: 19, col: 5)
-  invalid: unable 'io.insert-koin:koin-android' (source: null) in koin (java) (line: 21, col: 9)
-  invalid: require 'name' field in (line: 27, col: 5)
-  Error: 7 issues found
-  ```
+- Management buckets
 
-### `bucket`
+```bash
+# Add bucket
+$ ./brick bucket add namhyun-gu:brick@main
+Added namhyun-gu:brick to bucket.
 
-> Management bucket
+# Add bucket with Path
+$ ./brick bucket add namhyun-gu:brick@main --path data/
+Added namhyun-gu:brick to bucket.
 
-- `add`
+# Remove bucket
+$ ./brick bucket remove namhyun-gu:brick
+Removed namhyun-gu:brick to bucket.
 
-  > Add new bucket
+# Print buckets
+$ ./brick bucket list
+namhyun-gu:brick@main data/
+```
 
-    - Argument  
-      `{owner}:{repo}@{branch}`
+## License
 
-      e.g namhyun-gu:brick@main
-    - Options
-        - `-p`, `--path`: Bucket default path, defaults `""`
-    - Example
-      ```bash
-      $ ./brick bucket add namhyun-gu:brick@main --path data/
-      Added namhyun-gu:brick to bucket.
-      ```
+```
+Copyright 2021 Namhyun, Gu
 
-- `remove`
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
 
-  > Remove bucket
+   http://www.apache.org/licenses/LICENSE-2.0
 
-    - Argument  
-      `{owner}:{repo}`
-    - Example
-      ```bash
-      $ ./brick bucket remove namhyun-gu:brick
-      Removed namhyun-gu:brick to bucket.
-      ```
-
-- `list`
-
-  > Print bucket list
-
-    - Example
-      ```bash
-      $ ./brick bucket list
-      namhyun-gu:brick@main data/
-      Found 1 buckets.
-      ```
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+```

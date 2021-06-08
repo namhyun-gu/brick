@@ -36,8 +36,9 @@ func NewCmdGet(factory *cmdutil.Factory) *cobra.Command {
 	opts := &Options{}
 
 	cmd := &cobra.Command{
-		Use:  "get [section:group]",
-		Args: cobra.MinimumNArgs(1),
+		Use:   "get [section:group]",
+		Short: "Get latest library",
+		Args:  cobra.MinimumNArgs(1),
 		RunE: func(cmd *cobra.Command, args []string) error {
 			repository := factory.BucketRepository
 			buckets, err := repository.Read()
